@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Silicon Frontier — After Moore's Law</title>
+<style>
+  :root{
+    --bg:#0b0e1a;
+    --bg-2:#11152a;
+    --panel:#161b33;
+    --panel-2:#1c2240;
+    --line:#2a3157;
+    --line-soft:#222748;
+    --ink:#eef1fb;
+    --ink-2:#aab2d6;
+    --ink-3:#737ca6;
+    --gold:#e8b04b;        /* photoresist amber — signature */
+    --gold-soft:#f4d08a;
+    --copper:#c9794e;      /* interconnect copper */
+    --cyan:#5fd3e0;        /* photonics light */
+    --violet:#9b8cff;      /* alt-architecture */
+    --red:#e0606a;         /* geopolitics / constraint */
+    --green:#62c08a;
+    --r:14px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  /* ---------- sticky section nav ---------- */
+  .topnav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(11,14,26,.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .topnav-inner{
+    max-width:var(--maxw);margin:0 auto;
+    display:flex;align-items:center;gap:4px;
+    padding:9px 16px;overflow-x:auto;scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+  }
+  .topnav-inner::-webkit-scrollbar{height:5px}
+  .topnav-inner::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+  .topnav .nav-brand{
+    font-family:"Space Grotesk";font-weight:700;font-size:13px;color:var(--gold);
+    white-space:nowrap;padding:6px 12px 6px 4px;margin-right:4px;
+    border-right:1px solid var(--line);letter-spacing:.01em;flex-shrink:0;
+  }
+  .topnav a{
+    flex-shrink:0;white-space:nowrap;text-decoration:none;cursor:pointer;
+    font-family:"Space Grotesk";font-size:12.5px;font-weight:500;color:var(--ink-2);
+    padding:7px 12px;border-radius:99px;border:1px solid transparent;transition:.15s;
+    display:flex;align-items:center;gap:6px;
+  }
+  .topnav a .nn{font-size:10.5px;color:var(--ink-3);font-weight:600}
+  .topnav a:hover{color:var(--ink);background:var(--panel)}
+  .topnav a.active{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+  .topnav a.active .nn{color:var(--bg);opacity:.65}
+  section[id]{scroll-margin-top:64px}
+  @media(max-width:760px){
+    .topnav .nav-brand{display:none}
+    .topnav a .nn{display:none}
+    .topnav-inner{padding:8px 12px}
+    .topnav a{padding:7px 11px;font-size:12px}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(232,176,75,.10), transparent 60%),
+      radial-gradient(900px 500px at -5% 20%, rgba(95,211,224,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  a{color:inherit}
+
+  /* ---------- die-grid backdrop ---------- */
+  .die-grid{
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:54px 54px;
+    -webkit-mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 75%);
+            mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 75%);
+  }
+  .content{position:relative;z-index:1}
+
+  /* ---------- typography ---------- */
+  h1,h2,h3{font-family:"Space Grotesk","Inter",sans-serif;font-weight:600;letter-spacing:-.02em;line-height:1.12}
+  .eyebrow{
+    font-family:"Space Grotesk",monospace;
+    font-size:12px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;
+  }
+  .mono{font-family:"Space Grotesk","SFMono-Regular",ui-monospace,monospace}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:64px 0 30px;text-align:center}
+  .hero h1{font-size:clamp(34px,6vw,68px);margin:18px 0 0}
+  .hero h1 .glow{color:var(--gold)}
+  .hero .sub{
+    max-width:680px;margin:20px auto 0;color:var(--ink-2);
+    font-size:clamp(15px,2.2vw,18px);
+  }
+  .wafer-mark{
+    width:74px;height:74px;margin:0 auto;display:block;
+    filter:drop-shadow(0 0 22px rgba(232,176,75,.35));
+  }
+  .credit{margin-top:26px;font-size:12.5px;color:var(--ink-3)}
+  .credit b{color:var(--ink-2);font-weight:600}
+
+  /* ---------- thesis strip ---------- */
+  .thesis{
+    margin:38px auto 8px;max-width:920px;
+    border:1px solid var(--line);border-radius:var(--r);
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));
+    padding:26px 30px;
+  }
+  .thesis p{margin:0;font-size:17px;color:var(--ink)}
+  .thesis .lead{font-family:"Space Grotesk";font-size:15px;color:var(--gold);margin-bottom:8px;letter-spacing:.04em}
+
+  /* ---------- section scaffold ---------- */
+  section{padding:46px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .sec-num{font-family:"Space Grotesk";color:var(--ink-3);font-size:14px;font-weight:600}
+  .sec-head h2{font-size:clamp(23px,3.4vw,32px);margin:0}
+  .sec-sub{color:var(--ink-2);max-width:760px;margin:10px 0 26px;font-size:15.5px}
+
+  /* ---------- foundation: three walls ---------- */
+  .walls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .wall{
+    border:1px solid var(--line);border-radius:var(--r);background:var(--panel);
+    padding:20px;position:relative;overflow:hidden;
+  }
+  .wall::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--copper)}
+  .wall h3{font-size:17px;margin:0 0 6px}
+  .wall p{margin:0;color:var(--ink-2);font-size:14px}
+  .wall .tag{font-family:"Space Grotesk";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);font-weight:600}
+
+  /* ---------- TABS / tech map ---------- */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+  .tab{
+    font-family:"Space Grotesk";font-size:13.5px;font-weight:500;
+    padding:9px 15px;border-radius:999px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink-2);cursor:pointer;transition:.18s;
+    display:flex;align-items:center;gap:8px;
+  }
+  .tab:hover{border-color:var(--gold);color:var(--ink)}
+  .tab.active{background:var(--gold);color:#1a1606;border-color:var(--gold);font-weight:600}
+  .tab .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.8}
+  .panel-card{
+    border:1px solid var(--line);border-radius:var(--r);
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    padding:26px 28px;min-height:230px;
+  }
+  .panel-card.hidden{display:none}
+  .pc-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .pc-icon{width:34px;height:34px;flex:none}
+  .panel-card h3{font-size:22px;margin:0}
+  .panel-card .role{font-family:"Space Grotesk";font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+  .panel-card .body{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+  .panel-card .body p{margin:0 0 12px;color:var(--ink-2);font-size:15px}
+  .panel-card .body p b{color:var(--ink)}
+  .statbox{border:1px solid var(--line);border-radius:10px;background:var(--bg-2);padding:14px 16px;margin-bottom:10px}
+  .statbox .k{font-family:"Space Grotesk";font-size:26px;font-weight:600;color:var(--gold)}
+  .statbox .l{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+  .insight{
+    margin-top:6px;padding:12px 14px;border-left:3px solid var(--gold);
+    background:rgba(232,176,75,.07);border-radius:0 8px 8px 0;font-size:14px;color:var(--gold-soft)
+  }
+  .insight b{color:var(--gold)}
+
+  /* ---------- SCALE comparison (signature) ---------- */
+  .scale-stage{
+    border:1px solid var(--line);border-radius:var(--r);
+    background:
+      radial-gradient(600px 300px at 70% 50%, rgba(232,176,75,.08), transparent 70%),
+      var(--bg-2);
+    padding:30px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center
+  }
+  .silicon-vis{position:relative;height:340px;display:flex;align-items:center;justify-content:center}
+  .wse-area{
+    position:relative;width:300px;height:300px;border-radius:8px;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 15px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 1px, transparent 1px 15px),
+      linear-gradient(135deg,#e8b04b,#b6822f);
+    box-shadow:0 0 0 1px rgba(255,255,255,.12), 0 18px 40px rgba(0,0,0,.45);
+    display:flex;align-items:flex-start;justify-content:flex-start;
+  }
+  .wse-label{position:absolute;top:8px;left:10px;font-family:"Space Grotesk";font-size:11px;color:#2a1f06;font-weight:700;letter-spacing:.05em}
+  .h100-area{
+    position:absolute;right:18px;bottom:18px;
+    width:31px;height:31px;border-radius:3px;
+    background:linear-gradient(135deg,#7fe0d0,#3aa294);
+    box-shadow:0 0 0 1px rgba(255,255,255,.25), 0 6px 14px rgba(0,0,0,.5);
+    display:flex;align-items:center;justify-content:center;cursor:help;
+  }
+  .h100-tip{
+    position:absolute;right:0;bottom:56px;width:160px;font-size:11px;color:var(--ink-2);
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+    opacity:0;transform:translateY(4px);transition:.2s;pointer-events:none
+  }
+  .h100-area:hover + .h100-tip{opacity:1;transform:translateY(0)}
+  .scale-readout .eyebrow{display:block;margin-bottom:10px}
+  .scale-readout h3{font-size:24px;margin:0 0 4px}
+  .cmp-row{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .cmp-row:last-child{border-bottom:0}
+  .cmp-row .lbl{color:var(--ink-3)}
+  .cmp-row .a{color:var(--gold);font-family:"Space Grotesk";font-weight:600}
+  .cmp-row .b{color:var(--cyan);font-family:"Space Grotesk";font-weight:600}
+  .toggle-row{display:flex;gap:8px;margin-top:18px}
+  .toggle-row button{
+    flex:1;font-family:"Space Grotesk";font-size:12.5px;padding:8px;border-radius:8px;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink-2);cursor:pointer;transition:.15s
+  }
+  .toggle-row button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,176,75,.08)}
+
+  /* ---------- financial / analyst components ---------- */
+  .fin-block{margin-top:22px}
+  .fin-block h3{font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:9px}
+  .fin-block .fh-ico{font-size:18px}
+  .fin-block > p.lead-p{font-size:14.5px;color:var(--ink-2);margin:0 0 14px}
+  .fin-block p.lead-p b{color:var(--ink)}
+
+  /* capex bars */
+  .capex-wrap{border:1px solid var(--line);border-radius:var(--r);background:var(--bg-2);padding:20px 22px}
+  .capex-row{display:grid;grid-template-columns:88px 1fr 92px;align-items:center;gap:12px;margin-bottom:11px}
+  .capex-row:last-child{margin-bottom:0}
+  .capex-row .cl{font-family:"Space Grotesk";font-size:13px;color:var(--ink-2);font-weight:600}
+  .capex-bar-track{height:22px;background:var(--panel);border-radius:6px;overflow:hidden}
+  .capex-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--copper))}
+  .capex-row .cv{font-family:"Space Grotesk";font-size:13.5px;color:var(--gold);font-weight:600;text-align:right}
+  .capex-total{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-2)}
+  .capex-total b{color:var(--gold-soft);font-family:"Space Grotesk"}
+
+  /* BOM bridge */
+  .bom{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .bom .bom-stack{display:flex;flex-direction:column;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .bom .bseg{padding:10px 14px;font-family:"Space Grotesk";font-size:12.5px;display:flex;justify-content:space-between;color:#1a1606;font-weight:600}
+  .bom .bseg .bpct{opacity:.7;font-size:11px}
+  .bom-side .bigprice{font-family:"Space Grotesk";font-weight:700}
+  .bom-arrow{text-align:center;font-size:13px;color:var(--ink-3);margin:8px 0}
+  .bom-sell{border:1px solid var(--gold);border-radius:10px;background:rgba(232,176,75,.08);padding:14px 16px;text-align:center}
+  .bom-sell .bs-k{font-family:"Space Grotesk";font-size:24px;font-weight:700;color:var(--gold)}
+  .bom-sell .bs-l{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .bom-margin{margin-top:12px;text-align:center;font-size:13.5px;color:var(--gold-soft)}
+  .bom-margin b{color:var(--gold);font-family:"Space Grotesk";font-size:17px}
+
+  /* margin / financials table */
+  .fin-table{width:100%;border-collapse:collapse;font-size:13.5px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .fin-table th{background:var(--panel-2);color:var(--ink-2);font-family:"Space Grotesk";font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;text-align:right;padding:11px 13px;font-weight:600}
+  .fin-table th:first-child{text-align:left}
+  .fin-table td{padding:11px 13px;text-align:right;border-top:1px solid var(--line-soft);color:var(--ink-2)}
+  .fin-table td:first-child{text-align:left;color:var(--ink);font-weight:600;font-family:"Space Grotesk"}
+  .fin-table tr:hover td{background:rgba(232,176,75,.04)}
+  .fin-table .pos{color:var(--green);font-family:"Space Grotesk";font-weight:600}
+  .fin-table .big{color:var(--gold);font-family:"Space Grotesk";font-weight:600}
+  .fin-cap{font-size:11.5px;color:var(--ink-3);margin-top:8px}
+
+  /* TAM chips */
+  .tam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tam{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);padding:16px 18px}
+  .tam .tname{font-size:12.5px;color:var(--ink-3);font-family:"Space Grotesk";letter-spacing:.04em;margin-bottom:6px}
+  .tam .tnow{font-family:"Space Grotesk";font-size:22px;font-weight:700;color:var(--gold)}
+  .tam .tarrow{color:var(--ink-3);font-size:13px;margin:2px 0}
+  .tam .tfut{font-family:"Space Grotesk";font-size:15px;color:var(--gold-soft);font-weight:600}
+  .tam .tnote{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+
+  /* IPO case box */
+  .ipo-box{border:1px solid var(--line);border-radius:var(--r);background:var(--bg-2);padding:22px}
+  .ipo-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+  .ipo-head .ipo-tk{font-family:"Space Grotesk";font-size:13px;color:var(--cyan);border:1px solid var(--cyan);border-radius:6px;padding:3px 9px;font-weight:600}
+  .ipo-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .ipo-metrics .im{border:1px solid var(--line-soft);border-radius:9px;background:var(--panel);padding:12px;text-align:center}
+  .ipo-metrics .im .imk{font-family:"Space Grotesk";font-size:18px;font-weight:700;color:var(--gold)}
+  .ipo-metrics .im .iml{font-size:11px;color:var(--ink-3);margin-top:3px}
+  .bull-bear{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+  .bb{border-radius:10px;padding:14px 16px;font-size:13.5px}
+  .bb.bull{border:1px solid rgba(98,192,138,.4);background:rgba(98,192,138,.06)}
+  .bb.bear{border:1px solid rgba(224,96,106,.4);background:rgba(224,96,106,.06)}
+  .bb h5{margin:0 0 8px;font-family:"Space Grotesk";font-size:13px;letter-spacing:.04em}
+  .bb.bull h5{color:var(--green)}
+  .bb.bear h5{color:var(--red)}
+  .bb ul{margin:0;padding-left:16px;color:var(--ink-2)}
+  .bb li{margin-bottom:5px}
+  .bb li b{color:var(--ink)}
+
+  @media(max-width:760px){
+    .bom{grid-template-columns:1fr}
+    .tam-grid{grid-template-columns:1fr}
+    .ipo-metrics{grid-template-columns:repeat(2,1fr)}
+    .bull-bear{grid-template-columns:1fr}
+    .capex-row{grid-template-columns:74px 1fr 80px}
+    .fin-table{font-size:12px}
+    .fin-table th,.fin-table td{padding:8px 8px}
+  }
+
+  /* ---------- ECONOMICS bottleneck ---------- */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:6px}
+  .stage{
+    position:relative;border:1px solid var(--line);background:var(--panel);
+    padding:18px 16px;text-align:center;cursor:pointer;transition:.18s
+  }
+  .stage:first-child{border-radius:var(--r) 0 0 var(--r)}
+  .stage:last-child{border-radius:0 var(--r) var(--r) 0}
+  .stage + .stage{border-left:0}
+  .stage:hover{background:var(--panel-2)}
+  .stage.bottleneck{background:linear-gradient(180deg,rgba(224,96,106,.16),var(--panel));border-color:var(--red)}
+  .stage .ico{font-size:20px}
+  .stage .nm{font-family:"Space Grotesk";font-size:13.5px;font-weight:600;margin:6px 0 2px}
+  .stage .st{font-size:11.5px;color:var(--ink-3)}
+  .stage .badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-family:"Space Grotesk";font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:#1a0608;padding:2px 8px;border-radius:99px;font-weight:700;white-space:nowrap}
+  .flow-detail{
+    margin-top:16px;border:1px solid var(--line);border-radius:var(--r);
+    background:var(--bg-2);padding:18px 20px;font-size:14.5px;color:var(--ink-2)
+  }
+  .flow-detail b{color:var(--ink)}
+  .flow-detail .hl{color:var(--red);font-weight:600}
+
+  /* ---------- TIMELINE / geopolitics ---------- */
+  .timeline{position:relative;margin-top:8px;padding-left:4px}
+  .tl-track{position:absolute;left:13px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--gold),var(--red))}
+  .tl-item{position:relative;padding:0 0 22px 42px}
+  .tl-dot{position:absolute;left:6px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--gold);z-index:2}
+  .tl-item.geo .tl-dot{border-color:var(--red)}
+  .tl-item.tech .tl-dot{border-color:var(--cyan)}
+  .tl-date{font-family:"Space Grotesk";font-size:12.5px;color:var(--gold);font-weight:600;letter-spacing:.04em}
+  .tl-item.geo .tl-date{color:var(--red)}
+  .tl-item.tech .tl-date{color:var(--cyan)}
+  .tl-item h4{margin:3px 0 4px;font-size:16px;font-family:"Space Grotesk";font-weight:600}
+  .tl-item p{margin:0;font-size:14px;color:var(--ink-2)}
+  .tl-filter{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+  .tl-filter button{font-family:"Space Grotesk";font-size:12.5px;padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);cursor:pointer;transition:.15s}
+  .tl-filter button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .tl-era{position:relative;padding:0 0 14px 42px;margin-top:6px}
+  .tl-era::before{content:"";position:absolute;left:7px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);z-index:2}
+  .tl-era .ename{font-family:"Space Grotesk";font-size:15px;font-weight:700;color:var(--gold);letter-spacing:.02em}
+  .tl-era .edesc{font-size:13px;color:var(--ink-3);margin-top:2px}
+  .tl-legend{display:flex;gap:18px;flex-wrap:wrap;margin:-6px 0 20px;font-size:12.5px;color:var(--ink-3)}
+  .tl-legend span{display:flex;align-items:center;gap:7px}
+  .tl-legend .sw{width:11px;height:11px;border-radius:50%;border:2px solid var(--cyan)}
+  .tl-legend .sw.geo{border-color:var(--red)}
+
+  /* ---------- discourse / closing ---------- */
+  .discourse{
+    margin-top:14px;border:1px solid var(--line);border-radius:var(--r);
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));padding:30px
+  }
+  .discourse h3{font-size:21px;margin:0 0 16px}
+  .q-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .q{border:1px solid var(--line);border-radius:10px;background:var(--bg-2);padding:16px;font-size:14.5px;color:var(--ink-2)}
+  .q .qn{font-family:"Space Grotesk";color:var(--gold);font-weight:600;font-size:13px;display:block;margin-bottom:6px}
+
+  /* ---------- sources ---------- */
+  .sources{margin-top:30px;border-top:1px solid var(--line);padding-top:22px}
+  .sources h4{font-family:"Space Grotesk";font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+  .src-list{columns:2;column-gap:30px;font-size:12px;color:var(--ink-3)}
+  .src-list span{display:block;break-inside:avoid;margin-bottom:6px}
+  .src-list b{color:var(--ink-2);font-weight:600}
+  footer{padding:40px 0 60px;text-align:center;color:var(--ink-3);font-size:12.5px}
+  footer .disc{max-width:640px;margin:0 auto 14px;font-style:italic}
+
+  /* ---------- expanded solution panels ---------- */
+  .deep{margin-top:18px;border-top:1px solid var(--line-soft);padding-top:18px}
+  .deep h4{font-family:"Space Grotesk";font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+  .howrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;margin-bottom:14px}
+  .howrow .htext p{margin:0 0 10px;font-size:14.5px;color:var(--ink-2)}
+  .howrow .htext p b{color:var(--ink)}
+  .howrow .hvis{background:var(--bg);border:1px solid var(--line-soft);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:160px}
+  .analogy{font-size:13.5px;padding:11px 14px;border-left:3px solid var(--cyan);background:rgba(95,211,224,.07);border-radius:0 8px 8px 0;color:#bdeef4;margin:10px 0}
+  .analogy b{color:var(--cyan)}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .mini{border:1px solid var(--line-soft);border-radius:9px;background:var(--bg-2);padding:13px 15px}
+  .mini .mh{font-family:"Space Grotesk";font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+  .mini p{margin:0;font-size:13px;color:var(--ink-3)}
+  .mini.good .mh{color:var(--green)}
+  .mini.bad .mh{color:var(--red)}
+
+  /* binary / how-compute explainer */
+  .compute-strip{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:22px 26px;margin-top:18px}
+  .compute-strip h3{font-size:18px;margin:0 0 12px}
+  .compute-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+  .cf-node{border:1px solid var(--line);border-radius:10px;background:var(--bg-2);padding:12px 16px;text-align:center;min-width:120px;flex:1}
+  .cf-node .cfk{font-family:"Space Grotesk";font-size:15px;font-weight:600;color:var(--gold)}
+  .cf-node .cfl{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .cf-arrow{color:var(--ink-3);font-size:20px}
+  .compute-strip .closer{font-size:14px;color:var(--ink-2);margin:8px 0 0}
+  .compute-strip .closer b{color:var(--ink)}
+
+  /* term tag for jargon glosses */
+  .jt{border-bottom:1px dotted var(--ink-3);cursor:help}
+
+  /* ---------- inline citations ---------- */
+  .cite{
+    font-family:"Space Grotesk",monospace;font-size:.62em;font-weight:600;
+    color:var(--gold);vertical-align:super;line-height:0;text-decoration:none;
+    padding:0 1px;cursor:pointer;white-space:nowrap;
+  }
+  .cite:hover{color:var(--gold-soft);text-decoration:underline}
+  .ref-list{list-style:none;counter-reset:ref;padding:0;margin:0;font-size:12px;color:var(--ink-3)}
+  .ref-list li{
+    counter-increment:ref;position:relative;padding:7px 0 7px 34px;
+    border-bottom:1px solid var(--line-soft);break-inside:avoid;line-height:1.45;
+  }
+  .ref-list li::before{
+    content:"[" counter(ref) "]";position:absolute;left:0;top:7px;
+    font-family:"Space Grotesk";font-weight:600;color:var(--gold);font-size:11.5px;
+  }
+  .ref-list li b{color:var(--ink-2);font-weight:600}
+  .ref-list li:target{background:rgba(232,176,75,.10);border-radius:6px}
+  .ref-cols{columns:2;column-gap:34px}
+  @media(max-width:760px){.ref-cols{columns:1}}
+
+  /* ---------- glossary (most basic layer) ---------- */
+  .gloss-intro{
+    border:1px solid var(--line);border-radius:var(--r);
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));
+    padding:22px 26px;margin-bottom:20px;font-size:16px;color:var(--ink-2)
+  }
+  .gloss-intro b{color:var(--gold-soft)}
+  .gloss{display:flex;flex-direction:column;gap:14px}
+  .term{
+    border:1px solid var(--line);border-radius:var(--r);background:var(--panel);
+    padding:20px 22px;display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:start
+  }
+  .term .lead-col{border-right:1px solid var(--line-soft);padding-right:18px}
+  .term .word{font-family:"Space Grotesk";font-size:20px;font-weight:600;color:var(--gold);line-height:1.15}
+  .term .pron{font-size:12px;color:var(--ink-3);margin-top:4px;font-style:italic}
+  .term .def p{margin:0 0 10px;font-size:15px;color:var(--ink-2)}
+  .term .def p b{color:var(--ink)}
+  .term .why{font-size:13px;color:var(--gold-soft);background:rgba(232,176,75,.07);border-left:3px solid var(--gold);padding:9px 12px;border-radius:0 8px 8px 0}
+  .term .why b{color:var(--gold)}
+  .aside{font-size:12.5px;color:var(--ink-3);border-top:1px solid var(--line-soft);margin-top:10px;padding-top:9px}
+  .aside b{color:var(--ink-2)}
+
+  /* diode toggle */
+  .diode-demo{margin-top:12px;border:1px solid var(--line-soft);border-radius:10px;background:var(--bg-2);padding:14px}
+  .diode-svg-wrap{display:flex;justify-content:center;margin-bottom:10px}
+  .diode-btns{display:flex;gap:8px;justify-content:center}
+  .diode-btns button{font-family:"Space Grotesk";font-size:12.5px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);cursor:pointer;transition:.15s}
+  .diode-btns button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,176,75,.08)}
+  .diode-status{text-align:center;font-family:"Space Grotesk";font-size:13px;margin-top:9px;color:var(--ink-3)}
+
+  /* ---------- fundamentals: physics cards ---------- */
+  .fund-intro{
+    border:1px solid var(--line);border-radius:var(--r);background:var(--panel);
+    padding:22px 26px;margin-bottom:18px;font-size:15.5px;color:var(--ink-2)
+  }
+  .fund-intro b{color:var(--ink)}
+  .phys-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .phys{
+    border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    padding:22px;position:relative
+  }
+  .phys .step-k{font-family:"Space Grotesk";font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:12px;display:block}
+  .phys h3{font-size:18px;margin:0 0 10px}
+  .phys p{margin:0 0 10px;font-size:14px;color:var(--ink-2)}
+  .phys p b{color:var(--ink)}
+  .phys .micro{font-size:12.5px;color:var(--ink-3);border-top:1px solid var(--line-soft);padding-top:10px;margin-top:4px}
+  .phys .micro b{color:var(--gold-soft)}
+  .atom-vis{display:flex;justify-content:center;margin:4px 0 14px}
+
+  /* ---------- fab stepper ---------- */
+  .stepper-wrap{border:1px solid var(--line);border-radius:var(--r);background:var(--bg-2);overflow:hidden}
+  .step-nav{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .step-nav button{
+    flex:1 1 0;min-width:120px;background:transparent;border:0;border-right:1px solid var(--line-soft);
+    padding:13px 8px;cursor:pointer;color:var(--ink-3);font-family:"Space Grotesk";font-size:12.5px;
+    font-weight:600;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:5px
+  }
+  .step-nav button:last-child{border-right:0}
+  .step-nav button .sn{font-size:18px}
+  .step-nav button:hover{background:var(--panel);color:var(--ink-2)}
+  .step-nav button.on{background:var(--panel);color:var(--gold)}
+  .step-nav button.on .sn{filter:drop-shadow(0 0 8px rgba(232,176,75,.5))}
+  .step-body{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:230px}
+  .step-stage{
+    background:
+      radial-gradient(260px 200px at 50% 45%, rgba(232,176,75,.10), transparent 70%),
+      var(--bg);
+    display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line);padding:20px
+  }
+  .step-text{padding:24px 28px}
+  .step-text .num{font-family:"Space Grotesk";font-size:13px;color:var(--ink-3);font-weight:600}
+  .step-text h3{font-size:21px;margin:4px 0 10px}
+  .step-text p{margin:0 0 12px;font-size:14.5px;color:var(--ink-2)}
+  .step-text p b{color:var(--ink)}
+  .step-text .keynote{font-size:13px;padding:10px 13px;border-left:3px solid var(--gold);background:rgba(232,176,75,.07);border-radius:0 8px 8px 0;color:var(--gold-soft)}
+  .step-panel{display:none}
+  .step-panel.on{display:block}
+
+  /* ---------- EUV split ---------- */
+  .euv-stage{
+    border:1px solid var(--line);border-radius:var(--r);
+    background:radial-gradient(500px 280px at 25% 40%, rgba(95,211,224,.10), transparent 70%),var(--bg-2);
+    padding:28px;display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:center
+  }
+  .euv-text h3{font-size:20px;margin:0 0 10px}
+  .euv-text p{margin:0 0 12px;font-size:14.5px;color:var(--ink-2)}
+  .euv-text p b{color:var(--ink)}
+  .euv-text .cyannote{font-size:13px;padding:10px 13px;border-left:3px solid var(--cyan);background:rgba(95,211,224,.08);border-radius:0 8px 8px 0;color:#bdeef4}
+  .euv-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .euv-pill{font-family:"Space Grotesk";font-size:12px;border:1px solid var(--line);border-radius:99px;padding:6px 12px;color:var(--cyan)}
+  .euv-pill b{color:var(--ink);font-weight:600}
+
+  /* ---------- ecosystem split ---------- */
+  .eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .eco{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);padding:22px}
+  .eco h3{font-size:17px;margin:0 0 8px;display:flex;align-items:center;gap:9px}
+  .eco h3 .ei{font-size:19px}
+  .eco p{margin:0 0 10px;font-size:14px;color:var(--ink-2)}
+  .eco p b{color:var(--ink)}
+  .eco .figs{display:flex;gap:18px;border-top:1px solid var(--line-soft);padding-top:12px;margin-top:4px}
+  .eco .fig .fk{font-family:"Space Grotesk";font-size:20px;font-weight:600;color:var(--gold)}
+  .eco .fig .fl{font-size:11.5px;color:var(--ink-3)}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:880px){
+    .howrow{grid-template-columns:1fr}
+    .twocol{grid-template-columns:1fr}
+    .compute-flow{flex-direction:column}
+    .cf-arrow{transform:rotate(90deg)}
+    .term{grid-template-columns:1fr;gap:12px}
+    .term .lead-col{border-right:0;border-bottom:1px solid var(--line-soft);padding-right:0;padding-bottom:10px}
+    .phys-grid{grid-template-columns:1fr}
+    .step-body{grid-template-columns:1fr}
+    .step-stage{border-right:0;border-bottom:1px solid var(--line)}
+    .step-nav button{min-width:33%;flex:1 1 33%}
+    .euv-stage{grid-template-columns:1fr}
+    .eco-grid{grid-template-columns:1fr}
+    .walls{grid-template-columns:1fr}
+    .panel-card .body{grid-template-columns:1fr}
+    .scale-stage{grid-template-columns:1fr}
+    .silicon-vis{height:280px}
+    .wse-area{width:240px;height:240px}
+    .flow{grid-template-columns:repeat(2,1fr)}
+    .stage:nth-child(1){border-radius:var(--r) 0 0 0}
+    .stage:nth-child(2){border-radius:0 var(--r) 0 0;border-left:0}
+    .stage:nth-child(3){border-radius:0 0 0 var(--r);border-top:0}
+    .stage:nth-child(4){border-radius:0 0 var(--r) 0;border-left:0;border-top:0}
+    .q-grid{grid-template-columns:1fr}
+    .src-list{columns:1}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<!-- ===================== STICKY SECTION NAV ===================== -->
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <span class="nav-brand">◆ Silicon Frontier</span>
+    <a href="#words"><span class="nn">01</span> Plain English</a>
+    <a href="#basics"><span class="nn">02</span> What's a chip</a>
+    <a href="#howmade"><span class="nn">03</span> Sand to chip</a>
+    <a href="#euv"><span class="nn">04</span> Printing with light</a>
+    <a href="#ecosystem"><span class="nn">05</span> The ecosystem</a>
+    <a href="#walls"><span class="nn">06</span> The walls</a>
+    <a href="#map"><span class="nn">07</span> Five answers</a>
+    <a href="#scale"><span class="nn">08</span> Wafer-scale</a>
+    <a href="#econ"><span class="nn">09</span> Economics</a>
+    <a href="#geo"><span class="nn">10</span> Geopolitics</a>
+  </div>
+</nav>
+<div class="die-grid"></div>
+<div class="content">
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="wrap">
+    <svg class="wafer-mark" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" stroke="#e8b04b" stroke-width="2"/>
+      <line x1="68" y1="86" x2="84" y2="70" stroke="#e8b04b" stroke-width="2"/>
+      <g stroke="#e8b04b" stroke-width="1" opacity="0.55">
+        <line x1="20" y1="20" x2="20" y2="80"/><line x1="35" y1="12" x2="35" y2="88"/>
+        <line x1="50" y1="9" x2="50" y2="91"/><line x1="65" y1="12" x2="65" y2="88"/>
+        <line x1="80" y1="20" x2="80" y2="80"/>
+        <line x1="20" y1="20" x2="80" y2="20"/><line x1="12" y1="35" x2="88" y2="35"/>
+        <line x1="9" y1="50" x2="91" y2="50"/><line x1="12" y1="65" x2="88" y2="65"/>
+        <line x1="20" y1="80" x2="80" y2="80"/>
+      </g>
+    </svg>
+    <div class="eyebrow" style="margin-top:18px">An interactive field guide · June 2026</div>
+    <h1>The Silicon Frontier<br><span class="glow">after Moore's Law</span></h1>
+    <p class="sub">We start from absolute zero — what "sand," "silicon," and "semiconductor" even mean — then build step by step up to wafer-scale chips, the AI compute race, and the geopolitics around it. No background needed.</p>
+    <div class="credit">Researched &amp; built by <b>Sashank</b> · Sources cited throughout — open to discussion, corrections welcome</div>
+  </div>
+</header>
+
+<!-- ===================== THESIS ===================== -->
+<div class="wrap">
+  <div class="thesis">
+    <p class="lead mono">THE ONE IDEA THAT TIES IT ALL TOGETHER</p>
+    <p>For fifty years, computer chips got faster and cheaper almost automatically: every couple of years, engineers found ways to shrink the tiny switches inside them, so you could fit twice as many in the same space. That steady shrinking even had a name — <b>Moore's Law</b> (we'll define it properly below). But the switches are now so small they're bumping into the laws of physics, and the easy shrinking is ending. So the entire industry is scrambling to answer one question: <b style="color:var(--gold-soft)">if you can't just keep shrinking, how else do you keep making computers more powerful?</b> This page walks from the absolute basics up to the five big answers — and the global power struggle they've triggered.</p>
+  </div>
+</div>
+
+<!-- ===================== 1. PLAIN-ENGLISH GLOSSARY ===================== -->
+<section id="words">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2>The words, in plain English</h2></div>
+    <p class="sec-sub">Let's not assume anything. Before we build a chip, here are the everyday words you'll hear constantly — each defined from scratch, in plain language. Skim the ones you know; the rest build on each other.</p>
+
+    <div class="gloss-intro">
+      Here's the whole story in one sentence: we take a <b>grain of sand</b>, purify it into <b>silicon</b>, slice it into a <b>wafer</b>, and carve <b>billions of tiny switches</b> into it. Every term below is just one piece of that sentence.
+    </div>
+
+    <div class="gloss">
+
+      <!-- SAND -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Sand</div>
+          <div class="pron">…yes, really</div>
+        </div>
+        <div class="def">
+          <p>When people say chips "start as sand," they mean it literally. Ordinary quartz sand is mostly <b>silica</b> — silicon dioxide (SiO₂), silicon atoms bonded to oxygen. Silicon is the <b>second most abundant element in Earth's crust</b> (~26%)<a class="cite" href="#ref-2">[2]</a>, but it's never found pure; it's always locked to oxygen.</p>
+          <p>To free it, you mix high-quartz sand with carbon and heat it past <b>2,000°C</b> in an electric arc furnace. The carbon grabs the oxygen and floats off as gas, leaving behind raw silicon that's about 98–99% pure.<a class="cite" href="#ref-2">[2]</a></p>
+          <div class="why"><b>Why it matters →</b> The raw material is essentially free and everywhere. The value isn't the sand — it's the staggering precision of everything done to it next.</div>
+        </div>
+      </div>
+
+      <!-- SEMICONDUCTOR -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Semi&shy;conductor</div>
+          <div class="pron">the in-betweener</div>
+        </div>
+        <div class="def">
+          <p>The word describes exactly what it does. A <b>conductor</b> (like copper) always lets electricity flow. An <b>insulator</b> (like rubber or glass) never does. A <b>semiconductor</b> sits in between — it conducts only when you want it to.</p>
+          <p>The reason is something called the <b>band gap</b>: the energy hurdle an electron must clear to move and carry current. Conductors have basically no hurdle; insulators have a huge one; semiconductors have a <b>small</b> one — low enough that a little heat, light, or a clever chemical tweak flips them from "off" to "on."<a class="cite" href="#ref-1">[1]</a></p>
+          <div class="why"><b>Why it matters →</b> That controllable on/off behavior is the whole reason computers exist. A material you can switch is a material you can compute with.</div>
+        </div>
+      </div>
+
+      <!-- SILICON -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Silicon</div>
+          <div class="pron">element #14</div>
+        </div>
+        <div class="def">
+          <p>Silicon is the specific semiconductor the industry runs on. It's a <b>metalloid</b> — neither fully metal nor non-metal — and it won the job because it's abundant, cheap, electrically well-behaved, and conveniently grows its own insulating "skin" (silicon dioxide) when exposed to oxygen.</p>
+          <p>For chips, that 99% silicon from the furnace isn't nearly clean enough. A further chemical purification (the <b>Siemens process</b>) pushes it to "<b>eleven nines</b>" — 99.999999999% pure. That's roughly one stray atom per <b>billion</b> silicon atoms.<a class="cite" href="#ref-2">[2]</a><a class="cite" href="#ref-2">[2]</a></p>
+          <div class="aside"><b>Quick aside:</b> silicon (the hard, gray element) is <i>not</i> silicone (the soft, rubbery stuff in kitchenware and sealants). Same root word, totally different material.</div>
+        </div>
+      </div>
+
+      <!-- WAFER -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Wafer</div>
+          <div class="pron">the canvas</div>
+        </div>
+        <div class="def">
+          <p>That ultra-pure silicon is grown into a single large crystal — a cylindrical <b>ingot</b> (or "boule") up to 2 meters long<a class="cite" href="#ref-3">[3]</a> — then sliced like a deli loaf into thin, round discs. Because they're thin and round, they're called <b>wafers</b>.</p>
+          <p>A wafer is the surface everything gets built on. Crucially, you don't make one chip per wafer — you build <b>hundreds at once</b> across its face, then cut them apart at the very end. Bigger wafers (today usually 300mm across) mean more chips per slice and lower cost each.<a class="cite" href="#ref-3">[3]</a></p>
+          <div class="why"><b>Why it matters →</b> "Wafer-scale" — the headline technology later on — means refusing to cut the wafer up, and using the <i>entire</i> disc as one giant chip.</div>
+        </div>
+      </div>
+
+      <!-- DIODE -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Diode</div>
+          <div class="pron">the one-way valve</div>
+        </div>
+        <div class="def">
+          <p>The simplest useful device you can build from silicon. Take one piece doped to be <b>n-type</b> (extra electrons) and join it to a piece doped <b>p-type</b> (missing electrons) — that boundary is a <b>PN junction</b>, and it does something remarkable: current flows through it in <b>one direction only</b>.<a class="cite" href="#ref-4">[4]</a></p>
+          <p>The standard analogy is a <b>one-way valve</b> in a water pipe — it lets flow go forward but slams shut against any backflow. Push voltage the "right" way (forward bias) and current passes; push it the "wrong" way (reverse bias) and it's blocked.</p>
+          <div class="diode-demo">
+            <div class="diode-svg-wrap">
+              <svg id="diode-svg" width="240" height="70" viewBox="0 0 240 70" fill="none"></svg>
+            </div>
+            <div class="diode-btns" id="diode-btns">
+              <button class="on" data-bias="fwd">Forward bias →</button>
+              <button data-bias="rev">← Reverse bias</button>
+            </div>
+            <div class="diode-status" id="diode-status"></div>
+          </div>
+          <div class="why" style="margin-top:12px"><b>Why it matters →</b> A <b>transistor</b> — the switch a chip is made of — is essentially the next step up: a PN-junction device with a third terminal that lets you turn the flow on and off. Master the diode and the transistor is a short hop. (Defined next.)</div>
+        </div>
+      </div>
+
+      <!-- TRANSISTOR -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Transistor</div>
+          <div class="pron">the switch · the hero</div>
+        </div>
+        <div class="def">
+          <p>This is the single most important component in all of electronics — the thing a chip is billions of copies of. A transistor is a <b>tiny electrical switch with no moving parts</b>. A diode lets current flow one way; a transistor adds a third connection — a <b>gate</b> — that acts like a faucet handle. Put a small voltage on the gate and current flows (<b>"on" = 1</b>); remove it and the flow stops (<b>"off" = 0</b>).</p>
+          <p>The common modern type is called a <b>MOSFET</b>.<a class="cite" href="#ref-5">[5]</a> It has three parts: the <b>source</b> (where current enters), the <b>drain</b> (where it leaves), and the <b>gate</b> (the controlling handle in between).</p>
+          <div class="why"><b>Why it matters →</b> Everything else on this page — every "node," every "wall," every "trillion transistors" — is about making these switches smaller, faster, more numerous, and cheaper. When you read "4 trillion transistors," picture 4 trillion of these faucets on one piece of silicon.</div>
+        </div>
+      </div>
+
+      <!-- HOW SWITCHES COMPUTE -->
+      <div class="compute-strip">
+        <h3>Wait — how do switches become "computing"?</h3>
+        <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 4px">Fair question, and it's the leap most explanations skip. Here's the chain:</p>
+        <div class="compute-flow">
+          <div class="cf-node"><div class="cfk">On / Off</div><div class="cfl">a transistor is either conducting or not</div></div>
+          <span class="cf-arrow">→</span>
+          <div class="cf-node"><div class="cfk">1 / 0</div><div class="cfl">call "on" a 1 and "off" a 0 — that's a <b>bit</b>, binary</div></div>
+          <span class="cf-arrow">→</span>
+          <div class="cf-node"><div class="cfk">Logic</div><div class="cfl">wire a few transistors together and they can do "AND", "OR", "NOT" — actual reasoning steps</div></div>
+          <span class="cf-arrow">→</span>
+          <div class="cf-node"><div class="cfk">Math &amp; memory</div><div class="cfl">combine logic gates and you can add, compare, and store numbers</div></div>
+          <span class="cf-arrow">→</span>
+          <div class="cf-node"><div class="cfk">Everything</div><div class="cfl">billions of these, switching billions of times a second, run all software</div></div>
+        </div>
+        <p class="closer"><b>That's the whole magic.</b> A computer is not fundamentally clever — it's an enormous pile of on/off switches arranged so that "flip these switches in this pattern" happens to mean "add two numbers" or "recognize a face." Intelligence emerges from staggering quantity and speed, not from any single switch being smart.</p>
+      </div>
+
+      <!-- GPU -->
+      <div class="term" style="margin-top:14px">
+        <div class="lead-col">
+          <div class="word">GPU</div>
+          <div class="pron">graphics processing unit</div>
+        </div>
+        <div class="def">
+          <p>A chip you'll see mentioned constantly — and the reason Nvidia is one of the world's most valuable companies. A <b>GPU</b> was originally built to draw video-game graphics, which means doing the <b>same simple math on millions of pixels at once</b>. To do that, it crams in thousands of small calculators that all work <b>in parallel</b>.</p>
+          <p>It turned out that <b>training and running AI uses the exact same kind of math</b> — millions of small multiplications happening simultaneously. So the chips built for games became the workhorses of AI.<a class="cite" href="#ref-7">[7]</a> A <b>CPU</b> (your computer's general-purpose brain) does a few things very fast, one after another; a GPU does a huge number of things at once.</p>
+          <div class="why"><b>Why it matters →</b> Nearly every technology later on is, at heart, a different bet on how to build something <i>better than today's GPU</i> for AI — or how to feed the GPUs we already have. The financial stakes are staggering: Nvidia now earns <b>~75% gross margins</b> and posted <b>$81.6 billion of revenue in a single quarter</b> (early 2026, +85% year-over-year).<a class="cite" href="#ref-33">[33]</a></div>
+        </div>
+      </div>
+
+      <!-- MOORE'S LAW -->
+      <div class="term">
+        <div class="lead-col">
+          <div class="word">Moore's Law</div>
+          <div class="pron">the promise that's fading</div>
+        </div>
+        <div class="def">
+          <p>In 1965, Intel co-founder Gordon Moore noticed that the number of transistors engineers could fit on a chip was <b>doubling about every two years</b>.<a class="cite" href="#ref-6">[6]</a> That observation held for decades and became the heartbeat of the tech industry: chips reliably got twice as capable on a regular schedule, which is why your phone outclasses a 1990s supercomputer.</p>
+          <p>It was never a law of physics — just a remarkably steady trend. And it's now slowing, because transistors have shrunk to only a few atoms wide, where physics gets uncooperative and costs explode.</p>
+          <div class="aside"><b>Related term:</b> <b>Dennard scaling</b> was a companion trend — as transistors shrank, they also used proportionally less power. It broke down around 2006, which is why chips stopped getting dramatically faster and instead grew more cores.<a class="cite" href="#ref-6">[6]</a> These two fading trends are the reason this whole page exists.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. WHAT IS A CHIP ===================== -->
+<section id="basics">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">02</span><h2>Putting it together: what a chip actually is</h2></div>
+    <p class="sec-sub">You now know the words. Here's how three of them — silicon, doping, and the transistor — combine into a working chip, and how billions of switches get wired into something useful.</p>
+
+    <div class="fund-intro">
+      A modern AI chip is, at bottom, <b>billions of tiny switches etched into a sliver of purified sand</b>, connected by miles of microscopic copper wiring<a class="cite" href="#ref-8">[8]</a>. No single part is clever; the power comes entirely from the number of switches and how they're wired. Here's how you get from raw silicon to that.
+    </div>
+
+    <div class="phys-grid">
+      <!-- silicon -->
+      <div class="phys">
+        <span class="step-k">Idea 01 · the material</span>
+        <div class="atom-vis">
+          <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+            <circle cx="45" cy="45" r="11" fill="#e8b04b" opacity=".85"/>
+            <circle cx="45" cy="45" r="20" stroke="#e8b04b" stroke-width="1" opacity=".5"/>
+            <circle cx="45" cy="45" r="32" stroke="#e8b04b" stroke-width="1" opacity=".35"/>
+            <circle cx="65" cy="45" r="3.5" fill="#f4d08a"/><circle cx="25" cy="45" r="3.5" fill="#f4d08a"/>
+            <circle cx="45" cy="13" r="3.5" fill="#f4d08a"/><circle cx="45" cy="77" r="3.5" fill="#f4d08a"/>
+          </svg>
+        </div>
+        <h3>Silicon, the in-betweener</h3>
+        <p>A <b>semiconductor</b> sits between a conductor (metal) and an insulator (glass) — it conducts only when you want it to. Silicon is the workhorse: cheap, abundant in sand, and electrically well-behaved.</p>
+        <p class="micro">Chip-grade silicon must be <b>99.9999999% pure</b> — "nine nines."<a class="cite" href="#ref-2">[2]</a><a class="cite" href="#ref-2">[2]</a> A single stray atom in the wrong place can ruin a circuit.</p>
+      </div>
+
+      <!-- doping -->
+      <div class="phys">
+        <span class="step-k">Idea 02 · the chemistry</span>
+        <div class="atom-vis">
+          <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+            <g stroke="var(--line)" stroke-width="1">
+              <line x1="20" y1="20" x2="70" y2="20"/><line x1="20" y1="45" x2="70" y2="45"/><line x1="20" y1="70" x2="70" y2="70"/>
+              <line x1="20" y1="20" x2="20" y2="70"/><line x1="45" y1="20" x2="45" y2="70"/><line x1="70" y1="20" x2="70" y2="70"/>
+            </g>
+            <circle cx="20" cy="20" r="4" fill="#737ca6"/><circle cx="70" cy="20" r="4" fill="#737ca6"/>
+            <circle cx="20" cy="45" r="4" fill="#737ca6"/><circle cx="70" cy="45" r="4" fill="#737ca6"/>
+            <circle cx="20" cy="70" r="4" fill="#737ca6"/><circle cx="45" cy="70" r="4" fill="#737ca6"/><circle cx="70" cy="70" r="4" fill="#737ca6"/>
+            <circle cx="45" cy="45" r="5.5" fill="#5fd3e0"/>
+            <circle cx="45" cy="45" r="11" stroke="#5fd3e0" stroke-width="1" opacity=".6"/>
+            <circle cx="45" cy="20" r="4" fill="#e0606a"/>
+          </svg>
+        </div>
+        <h3>Doping: building the switch</h3>
+        <p>Pure silicon barely conducts. <b>Doping</b> sprinkles in trace impurities: add <b>phosphorus</b> (one spare electron) for <b>n-type</b>; add <b>boron</b> (one missing electron, a "hole") for <b>p-type</b>. Pattern these regions precisely and each becomes one transistor.</p>
+        <p class="micro">As little as <b>1 dopant atom per billion</b> silicon atoms can swing conductivity by a factor of <b>~1,000,000</b>.<a class="cite" href="#ref-1">[1]</a></p>
+      </div>
+
+      <!-- wiring -->
+      <div class="phys">
+        <span class="step-k">Idea 03 · the wiring</span>
+        <div class="atom-vis">
+          <svg width="120" height="90" viewBox="0 0 120 90" fill="none">
+            <rect x="14" y="62" width="20" height="16" rx="2" fill="#5fd3e0" opacity=".4" stroke="#5fd3e0"/>
+            <rect x="50" y="62" width="20" height="16" rx="2" fill="#5fd3e0" opacity=".4" stroke="#5fd3e0"/>
+            <rect x="86" y="62" width="20" height="16" rx="2" fill="#5fd3e0" opacity=".4" stroke="#5fd3e0"/>
+            <g stroke="#c9794e" stroke-width="1.6" fill="none">
+              <path d="M24 62V44h36"/><path d="M60 62V52h36V40"/><path d="M24 44h54"/>
+              <line x1="60" y1="40" x2="60" y2="44"/>
+            </g>
+            <circle cx="24" cy="44" r="2" fill="#c9794e"/><circle cx="60" cy="44" r="2" fill="#c9794e"/><circle cx="96" cy="40" r="2" fill="#c9794e"/>
+            <text x="60" y="14" fill="#737ca6" font-size="8" font-family="monospace" text-anchor="middle">copper layers</text>
+          </svg>
+        </div>
+        <h3>Wiring them into circuits</h3>
+        <p>Individual switches are useless alone. Stacked above the transistors are <b>up to ~15 layers of microscopic copper wiring</b><a class="cite" href="#ref-8">[8]</a> that connect them into <b>logic gates</b> and, ultimately, a working processor — like the floors and hallways of a city built on top of the switches.</p>
+        <p class="micro">A single advanced chip can hold <b>tens of miles</b> of this wiring, all in a space smaller than a fingernail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. SAND TO CHIP STEPPER ===================== -->
+<section id="howmade">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">03</span><h2>From sand to chip</h2></div>
+    <p class="sec-sub">How do you carve billions of switches into silicon? You don't carve them one by one — you <i>print</i> whole layers at once with light, then stack ~100 of them.<a class="cite" href="#ref-9">[9]</a> Step through the flow:</p>
+
+    <div class="stepper-wrap">
+      <div class="step-nav" id="step-nav">
+        <button class="on" data-step="0"><span class="sn">🪨</span>Grow crystal</button>
+        <button data-step="1"><span class="sn">💿</span>Slice wafer</button>
+        <button data-step="2"><span class="sn">🎞️</span>Coat resist</button>
+        <button data-step="3"><span class="sn">💡</span>Expose</button>
+        <button data-step="4"><span class="sn">🧪</span>Etch &amp; dope</button>
+        <button data-step="5"><span class="sn">📦</span>Test &amp; dice</button>
+      </div>
+      <div class="step-body">
+        <div class="step-stage">
+          <svg id="step-svg" width="180" height="180" viewBox="0 0 180 180" fill="none"></svg>
+        </div>
+        <div class="step-text" id="step-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. EUV ===================== -->
+<section id="euv">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">04</span><h2>The machine that prints with light</h2></div>
+    <p class="sec-sub">One step above deserves its own spotlight, because it's the hardest machine humanity builds — and it's the linchpin of the geopolitics later on.</p>
+
+    <div class="euv-stage">
+      <div class="euv-vis" style="display:flex;justify-content:center">
+        <svg width="280" height="220" viewBox="0 0 280 220" fill="none">
+          <!-- laser -->
+          <rect x="6" y="96" width="42" height="26" rx="3" fill="#161b33" stroke="var(--line)"/>
+          <text x="27" y="112" fill="#737ca6" font-size="8" font-family="monospace" text-anchor="middle">CO₂</text>
+          <text x="27" y="138" fill="#737ca6" font-size="7.5" font-family="monospace" text-anchor="middle">laser</text>
+          <!-- tin droplet plasma -->
+          <line x1="48" y1="109" x2="92" y2="109" stroke="#e0606a" stroke-width="2" stroke-dasharray="3 2"/>
+          <circle cx="98" cy="109" r="9" fill="#f4d08a"/>
+          <circle cx="98" cy="109" r="16" stroke="#e8b04b" stroke-width="1.2" opacity=".5"/>
+          <text x="98" y="140" fill="#e8b04b" font-size="7.5" font-family="monospace" text-anchor="middle">tin plasma</text>
+          <!-- EUV light to mirror -->
+          <path d="M107 105 L168 60" stroke="#5fd3e0" stroke-width="2"/>
+          <!-- mask top -->
+          <rect x="150" y="34" width="60" height="12" rx="2" fill="#1c2240" stroke="#9b8cff"/>
+          <text x="180" y="28" fill="#9b8cff" font-size="8" font-family="monospace" text-anchor="middle">mask</text>
+          <!-- reflect down to wafer -->
+          <path d="M180 46 L180 150" stroke="#5fd3e0" stroke-width="2"/>
+          <path d="M168 60 L180 46" stroke="#5fd3e0" stroke-width="2"/>
+          <!-- mirrors -->
+          <circle cx="168" cy="60" r="6" fill="none" stroke="#aab2d6" stroke-width="2"/>
+          <!-- wafer -->
+          <ellipse cx="180" cy="162" rx="44" ry="12" fill="#b6822f"/>
+          <ellipse cx="180" cy="160" rx="44" ry="12" fill="#e8b04b"/>
+          <text x="180" y="190" fill="#e8b04b" font-size="8" font-family="monospace" text-anchor="middle">wafer</text>
+        </svg>
+      </div>
+      <div class="euv-text">
+        <h3>EUV lithography, explained</h3>
+        <p>To print features a few atoms wide, you need light with an incredibly short wavelength — <b>13.5 nanometers</b><a class="cite" href="#ref-10">[10]</a>, "extreme ultraviolet." Making it borders on absurd: a high-power laser blasts <b>~50,000 droplets of molten tin per second</b><a class="cite" href="#ref-10">[10]</a>, vaporizing each into a plasma that flashes out EUV light.</p>
+        <p>That light is so easily absorbed it can't travel through air or normal lenses — the whole process runs in a <b>vacuum</b>, bounced off ultra-smooth <b>molybdenum/silicon mirrors</b> (each still soaks up ~30%)<a class="cite" href="#ref-10">[10]</a>. The light reflects off a patterned <b>mask</b> and shrinks that pattern onto the resist-coated wafer.</p>
+        <p class="cyannote"><b>Why this matters later →</b> Exactly one company on Earth — <b>ASML</b> in the Netherlands — can build these machines.<a class="cite" href="#ref-10">[10]</a> That single chokepoint is what makes export controls a geopolitical weapon (Section 10).</p>
+        <div class="euv-stats">
+          <span class="euv-pill"><b>13.5nm</b> wavelength</span>
+          <span class="euv-pill"><b>~50k</b> tin droplets/sec</span>
+          <span class="euv-pill"><b>1</b> maker: ASML</span>
+        </div>
+        <div class="deep" style="margin-top:18px">
+          <h4>Meet EUV's older sibling: DUV</h4>
+          <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">EUV is the newest, most exclusive printing light. But there's an older, cheaper one that's been around since the 2000s: <b>DUV</b> (deep ultraviolet), which uses a much longer <b>193nm</b> wavelength of light<a class="cite" href="#ref-11">[11]</a>. Longer wavelength means it naturally prints <i>chunkier</i> features — so on its own it can't reach the smallest, most advanced chips.</p>
+          <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">The workaround is <b>multi-patterning</b>: instead of printing a layer in one clean shot, you expose the wafer <b>several times</b> with slightly shifted patterns to build up finer detail — slower, costlier, and more error-prone, but it works. This sounds like an obscure technical footnote. It's actually the crux of the entire US–China chip war, because <b>DUV machines are cheap, widely sold, and not export-restricted — while EUV is.</b><a class="cite" href="#ref-11">[11]</a> Hold that thought for Section 10.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4. ECOSYSTEM ===================== -->
+<section id="ecosystem">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">05</span><h2>Nobody makes a chip alone</h2></div>
+    <p class="sec-sub">No single company designs, fabricates, and packages a frontier chip. The industry split into specialists — and understanding that split is the key to the economics and politics ahead.</p>
+
+    <div class="eco-grid">
+      <div class="eco">
+        <h3><span class="ei">✏️</span>The "fabless" designers</h3>
+        <p>Companies like <b>Nvidia, AMD, Apple and Cerebras</b> design chips but own no factory. They focus entirely on architecture and let someone else build it.</p>
+        <p>Why? Because a leading-edge factory is one of the most expensive objects in the private economy<a class="cite" href="#ref-12">[12]</a> — out of reach for all but a few.</p>
+        <div class="figs">
+          <div class="fig"><div class="fk">$20B+</div><div class="fl">cost of one leading-edge fab</div></div>
+          <div class="fig"><div class="fk">$48.5B</div><div class="fl">TSMC's planned 1.4nm fab</div><a class="cite" href="#ref-13">[13]</a></div>
+        </div>
+      </div>
+      <div class="eco">
+        <h3><span class="ei">🏭</span>The foundries</h3>
+        <p><b>TSMC</b> manufactures for everyone — the "pure-play foundry." Just three firms (TSMC, Samsung, Intel) can run the most advanced nodes<a class="cite" href="#ref-12">[12]</a> at all, which concentrates the entire world's compute into a few buildings.</p>
+        <p>Inside, conditions are extreme: a <b>single dust particle</b> can ruin a 3nm chip<a class="cite" href="#ref-12">[12]</a>, so wafers move through air thousands of times cleaner than an operating room.</p>
+        <div class="figs">
+          <div class="fig"><div class="fk">~19 mo</div><div class="fl">to build a fab in Taiwan (38 in the US)<a class="cite" href="#ref-12">[12]</a></div></div>
+          <div class="fig"><div class="fk">66%</div><div class="fl">TSMC gross margin — rare for a factory business<a class="cite" href="#ref-34">[34]</a></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 5. FOUNDATION: THE THREE WALLS ===================== -->
+<section id="walls">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">06</span><h2>Now: the walls every modern chip hits</h2></div>
+    <p class="sec-sub">Before the solutions make sense, you need the constraints. Three physical ceilings now govern AI hardware design — and almost every technology further down exists to climb one of them.</p>
+    <div class="walls">
+      <div class="wall">
+        <span class="tag">Wall 01</span>
+        <h3>The Memory Wall</h3>
+        <p>A chip's calculator and its memory (where the numbers live) are in <b>separate places</b>, joined by a limited number of wires. Modern AI chips can do math far faster than those wires can deliver the data — so the expensive calculator sits idle, waiting for numbers to arrive, like a chef who can cook instantly but keeps waiting on ingredients.</p>
+        <p>Engineers call this the <b>von Neumann bottleneck</b> (after the computer-design blueprint nearly all chips still follow). For today's AI, <i>memory</i>, not raw math, is the real limit.</p>
+      </div>
+      <div class="wall">
+        <span class="tag">Wall 02</span>
+        <h3>The Interconnect Wall</h3>
+        <p>No single chip is big enough for a large AI model, so the work is split across thousands of chips — and now <b>moving data between them</b> becomes the problem. Beyond a certain speed, ordinary copper wires can't carry the signal across even a server rack without it degrading and burning huge amounts of power. That ceiling pushes the industry toward sending data as <b>light</b> instead.</p>
+      </div>
+      <div class="wall">
+        <span class="tag">Wall 03</span>
+        <h3>The Reticle Limit</h3>
+        <p>The machine that prints chip patterns (Section 04) can only print one chip up to a fixed maximum size in a single shot — about <b>858 mm²</b>, roughly the size of a postage stamp<a class="cite" href="#ref-14">[14]</a>. This hard ceiling is called the <b>reticle limit</b>. You can't just "print a bigger chip" to get more power. Beating this ceiling is the entire premise of wafer-scale engineering.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. THE FRONTIER MAP (tabs) ===================== -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">07</span><h2>Five answers to the same problem</h2></div>
+    <p class="sec-sub">Each approach below attacks the walls differently. Tap a tab to open a full walk-through — what problem it solves, how it actually works, an everyday analogy, and the catch. Wafer-scale and packaging go deepest.</p>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-t="wafer"><span class="dot" style="color:var(--gold)"></span>Wafer-Scale</button>
+      <button class="tab" data-t="pkg"><span class="dot" style="color:var(--copper)"></span>Advanced Packaging</button>
+      <button class="tab" data-t="photo"><span class="dot" style="color:var(--cyan)"></span>Silicon Photonics</button>
+      <button class="tab" data-t="neuro"><span class="dot" style="color:var(--violet)"></span>Neuromorphic &amp; Analog</button>
+      <button class="tab" data-t="node"><span class="dot" style="color:var(--gold-soft)"></span>The 2nm Node</button>
+    </div>
+
+    <!-- WAFER -->
+    <div class="panel-card" data-p="wafer">
+      <div class="pc-top">
+        <svg class="pc-icon" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="17" stroke="#e8b04b" stroke-width="2"/><rect x="11" y="11" width="18" height="18" fill="#e8b04b" opacity=".25"/><path d="M11 17h18M11 23h18M17 11v18M23 11v18" stroke="#e8b04b" stroke-width="1"/></svg>
+        <div><h3>Wafer-Scale Integration</h3></div>
+      </div>
+      <div class="role">Climbs · the reticle limit + the interconnect wall</div>
+      <div class="body">
+        <div>
+          <p><b>The bet:</b> instead of cutting a wafer into hundreds of separate chips and wiring them back together, keep the <i>entire wafer</i> as one giant processor. Cerebras's WSE-3 does exactly this — a single chip 21.5 cm on a side, the size of a dinner plate.<a class="cite" href="#ref-15">[15]</a></p>
+          <p><b>Why it wins:</b> remember the interconnect wall — data crawling between separate chips? On one continuous wafer, that data never leaves home. It moves on-chip at <b>21 petabytes per second</b><a class="cite" href="#ref-15">[15]</a>, thousands of times faster than chips talking over cables. For AI, where the bottleneck is feeding data fast enough, that's transformative.</p>
+          <p style="font-size:13.5px;color:var(--ink-3)">Why does AI care so much about this? When a chatbot generates text, it must read through its <i>entire</i> multi-billion-number "brain" to produce each single word, then do it again for the next word. That's less about raw math and more about <b>shoveling enormous amounts of data fast</b> — exactly what keeping everything on one giant chip enables.</p>
+        </div>
+        <div>
+          <div class="statbox"><div class="k">4 trillion</div><a class="cite" href="#ref-15">[15]</a><div class="l">transistors on one wafer (vs. ~80 billion on a top GPU)</div></div>
+          <div class="statbox"><div class="k">900,000</div><a class="cite" href="#ref-15">[15]</a><div class="l">AI cores · 44 GB of memory on the chip itself</div></div>
+          <div class="statbox"><div class="k">~$22–25B</div><a class="cite" href="#ref-16">[16]</a><div class="l">Cerebras IPO target · filed Apr 2026, $510M FY25 revenue</div></div>
+        </div>
+      </div>
+
+      <div class="deep">
+        <h4>How do you beat the reticle limit? — field stitching</h4>
+        <div class="howrow">
+          <div class="htext">
+            <p>The printing machine still can't expose anything bigger than ~858 mm². So how is the chip 50× larger?<a class="cite" href="#ref-14">[14]</a> The trick is <b>field stitching</b>. The foundry prints <b>84 identical tiles</b> across the wafer<a class="cite" href="#ref-14">[14]</a> — exactly as if making 84 normal chips — but then, instead of <b>sawing them apart</b>, it adds extra steps to <b>print short wires across the gaps</b> (the "scribe lines" that normally get cut through).</p>
+            <p>Over <b>one million wires</b> bridge those seams<a class="cite" href="#ref-14">[14]</a>, fusing 84 tiles into one continuous circuit. To the software, the seams simply don't exist — it sees a single enormous chip.</p>
+          </div>
+          <div class="hvis">
+            <svg width="220" height="150" viewBox="0 0 220 150" fill="none">
+              <g stroke="var(--line)" stroke-width="1">
+                <rect x="20" y="20" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+                <rect x="82" y="20" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+                <rect x="144" y="20" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+                <rect x="20" y="78" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+                <rect x="82" y="78" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+                <rect x="144" y="78" width="55" height="50" fill="#e8b04b" opacity=".18"/>
+              </g>
+              <g stroke="#c9794e" stroke-width="1.5">
+                <line x1="75" y1="38" x2="82" y2="38"/><line x1="75" y1="52" x2="82" y2="52"/>
+                <line x1="137" y1="38" x2="144" y2="38"/><line x1="137" y1="52" x2="144" y2="52"/>
+                <line x1="75" y1="96" x2="82" y2="96"/><line x1="137" y1="96" x2="144" y2="96"/>
+                <line x1="46" y1="70" x2="46" y2="78"/><line x1="110" y1="70" x2="110" y2="78"/><line x1="172" y1="70" x2="172" y2="78"/>
+              </g>
+              <text x="110" y="145" fill="#737ca6" font-size="9" font-family="monospace" text-anchor="middle">tiles stitched, not sawed apart</text>
+            </svg>
+          </div>
+        </div>
+        <h4>How does a dinner-plate chip survive defects? — redundancy</h4>
+        <div class="howrow">
+          <div class="htext">
+            <p>Every wafer has microscopic flaws — normally you just throw away the few bad chips. But you can't throw away part of a single giant chip. Cerebras's answer: build the chip from <b>tiny cores</b> (~900,000 of them) and <b>quietly include ~1.5% spares</b><a class="cite" href="#ref-15">[15]</a>. When a flaw kills a core, on-chip logic <b>routes around it</b> and swaps in a neighbor — the chip doesn't even notice.</p>
+            <p>This flips intuition on its head: because each core is so small, a defect wastes a speck of silicon instead of a whole chip. The giant chip ends up <b>as reliable to manufacture as a normal one</b>.</p>
+          </div>
+          <div class="hvis">
+            <svg width="180" height="150" viewBox="0 0 180 150" fill="none">
+              <g>
+                <!-- grid of tiny cores -->
+                <g fill="#5fd3e0" opacity=".35">
+                  <rect x="20" y="20" width="14" height="14"/><rect x="38" y="20" width="14" height="14"/><rect x="56" y="20" width="14" height="14"/><rect x="74" y="20" width="14" height="14"/><rect x="92" y="20" width="14" height="14"/><rect x="110" y="20" width="14" height="14"/><rect x="128" y="20" width="14" height="14"/>
+                  <rect x="20" y="38" width="14" height="14"/><rect x="38" y="38" width="14" height="14"/><rect x="74" y="38" width="14" height="14"/><rect x="92" y="38" width="14" height="14"/><rect x="110" y="38" width="14" height="14"/><rect x="128" y="38" width="14" height="14"/>
+                  <rect x="20" y="56" width="14" height="14"/><rect x="38" y="56" width="14" height="14"/><rect x="56" y="56" width="14" height="14"/><rect x="74" y="56" width="14" height="14"/><rect x="92" y="56" width="14" height="14"/><rect x="128" y="56" width="14" height="14"/>
+                  <rect x="20" y="74" width="14" height="14"/><rect x="38" y="74" width="14" height="14"/><rect x="56" y="74" width="14" height="14"/><rect x="74" y="74" width="14" height="14"/><rect x="92" y="74" width="14" height="14"/><rect x="110" y="74" width="14" height="14"/><rect x="128" y="74" width="14" height="14"/>
+                </g>
+                <!-- dead core -->
+                <rect x="56" y="38" width="14" height="14" fill="#e0606a"/>
+                <rect x="110" y="56" width="14" height="14" fill="#e0606a"/>
+                <!-- reroute -->
+                <path d="M63 52 Q63 64 77 64" stroke="#e8b04b" stroke-width="1.6" fill="none"/>
+              </g>
+              <text x="80" y="108" fill="#e0606a" font-size="9" font-family="monospace" text-anchor="middle">■ defect</text>
+              <text x="80" y="124" fill="#e8b04b" font-size="9" font-family="monospace" text-anchor="middle">↳ rerouted to a spare</text>
+            </svg>
+          </div>
+        </div>
+        <p class="analogy"><b>Analogy →</b> A normal chip is a single sheet of glass — one crack and it's scrap. A wafer-scale chip is a <b>mosaic of tiny tiles</b>: a few cracked tiles barely matter, and you keep spares in the box to swap in.</p>
+        <div class="twocol">
+          <div class="mini good"><div class="mh">⚡ Where it shines</div><p>Running today's largest AI models fast (inference). Deployed at Meta, Mayo Clinic, the US Dept. of Defense<a class="cite" href="#ref-16">[16]</a>; reported to answer many times faster than GPU systems.</p></div>
+          <div class="mini bad"><div class="mh">⚠ The catch</div><p>Feeding a 23-kilowatt chip power and cooling is brutal (300+ voltage regulators, custom liquid cooling)<a class="cite" href="#ref-15">[15]</a>. And it's locked to TSMC — a decade of co-engineering a rival can't quickly copy. Its May 2026 IPO priced at a ~$66B valuation on just $510M of revenue — richly valued, with 86% of sales from two customers.<a class="cite" href="#ref-41">[41]</a><a class="cite" href="#ref-40">[40]</a></p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGING -->
+    <div class="panel-card hidden" data-p="pkg">
+      <div class="pc-top">
+        <svg class="pc-icon" viewBox="0 0 40 40" fill="none"><rect x="7" y="22" width="26" height="9" rx="1" stroke="#c9794e" stroke-width="2"/><rect x="11" y="14" width="8" height="8" fill="#c9794e" opacity=".4" stroke="#c9794e"/><rect x="21" y="14" width="8" height="8" fill="#c9794e" opacity=".25" stroke="#c9794e"/><rect x="15" y="7" width="10" height="7" stroke="#c9794e" stroke-width="2"/></svg>
+        <div><h3>Advanced Packaging — the unsung hero</h3></div>
+      </div>
+      <div class="role">Climbs · the memory wall · "if you can't shrink it, stack it"</div>
+      <div class="body">
+        <div>
+          <p>If you can't make a single transistor much smaller, change strategy: take several separate pieces of silicon — called <b>chiplets</b> — and pack them together so tightly they behave like one chip. This is <b>advanced packaging</b>, and it's quietly become the most important battleground in chipmaking.</p>
+          <p>The headline product is putting an AI processor <b>right next to its memory</b> on a shared base, with a huge, ultra-short connection between them — directly attacking the memory wall.</p>
+        </div>
+        <div>
+          <div class="statbox"><div class="k">~1M</div><a class="cite" href="#ref-19">[19]</a><div class="l">CoWoS packaging units needed in 2026 (≈2.7× 2024)</div></div>
+          <div class="statbox"><div class="k">+50–55%</div><a class="cite" href="#ref-19">[19]</a><div class="l">projected memory price jump in a single quarter — the "memory supercycle"</div></div>
+          <div class="statbox"><div class="k">3 firms</div><a class="cite" href="#ref-19">[19]</a><div class="l">SK hynix, Samsung, Micron make nearly all the HBM memory</div></div>
+        </div>
+      </div>
+
+      <div class="deep">
+        <h4>The three building blocks (in plain terms)</h4>
+        <div class="howrow">
+          <div class="htext">
+            <p><b>The interposer</b> — a thin slab of silicon that acts like a super-dense "circuit board within the chip." Chiplets sit on top of it, connected by wiring far finer than any normal board allows.</p>
+            <p><b>TSVs (through-silicon vias)</b> — microscopic vertical tunnels drilled <i>through</i> silicon so signals can pass straight up and down between stacked layers, instead of routing around the edges.</p>
+            <p><b>HBM (high-bandwidth memory)</b> — memory chips <b>stacked like a tower</b><a class="cite" href="#ref-18">[18]</a> (using those TSVs) instead of laid flat, putting far more memory in reach of the processor. This stacked memory is the single hottest commodity in AI hardware.</p>
+          </div>
+          <div class="hvis">
+            <svg width="230" height="160" viewBox="0 0 230 160" fill="none">
+              <!-- substrate -->
+              <rect x="20" y="120" width="190" height="18" rx="2" fill="#161b33" stroke="var(--line)"/>
+              <text x="115" y="133" fill="#737ca6" font-size="7.5" font-family="monospace" text-anchor="middle">package substrate</text>
+              <!-- interposer -->
+              <rect x="35" y="104" width="160" height="14" rx="1" fill="#1c2240" stroke="#c9794e"/>
+              <text x="115" y="114" fill="#c9794e" font-size="7" font-family="monospace" text-anchor="middle">silicon interposer</text>
+              <!-- GPU die -->
+              <rect x="96" y="64" width="48" height="38" rx="2" fill="#e8b04b" opacity=".85"/>
+              <text x="120" y="86" fill="#2a1f06" font-size="8" font-family="monospace" text-anchor="middle" font-weight="bold">GPU</text>
+              <!-- HBM stacks -->
+              <g>
+                <rect x="48" y="72" width="40" height="6" fill="#5fd3e0" opacity=".8"/><rect x="48" y="80" width="40" height="6" fill="#5fd3e0" opacity=".6"/><rect x="48" y="88" width="40" height="6" fill="#5fd3e0" opacity=".45"/><rect x="48" y="96" width="40" height="6" fill="#5fd3e0" opacity=".3"/>
+                <text x="68" y="62" fill="#5fd3e0" font-size="7" font-family="monospace" text-anchor="middle">HBM</text>
+              </g>
+              <g>
+                <rect x="152" y="72" width="40" height="6" fill="#5fd3e0" opacity=".8"/><rect x="152" y="80" width="40" height="6" fill="#5fd3e0" opacity=".6"/><rect x="152" y="88" width="40" height="6" fill="#5fd3e0" opacity=".45"/><rect x="152" y="96" width="40" height="6" fill="#5fd3e0" opacity=".3"/>
+                <text x="172" y="62" fill="#5fd3e0" font-size="7" font-family="monospace" text-anchor="middle">HBM</text>
+              </g>
+              <!-- TSV hints -->
+              <g stroke="#737ca6" stroke-width="1" opacity=".7"><line x1="60" y1="72" x2="60" y2="102"/><line x1="76" y1="72" x2="76" y2="102"/><line x1="164" y1="72" x2="164" y2="102"/><line x1="180" y1="72" x2="180" y2="102"/></g>
+              <text x="115" y="152" fill="#737ca6" font-size="8" font-family="monospace" text-anchor="middle">memory sits right beside the processor</text>
+            </svg>
+          </div>
+        </div>
+        <div class="twocol">
+          <div class="mini"><div class="mh">📐 2.5D — side by side</div><p>Chiplets placed <b>next to each other</b> on the interposer. The proven, dominant approach today (e.g. TSMC's <b>CoWoS</b>). Easier to cool since the hot parts sit apart.</p></div>
+          <div class="mini"><div class="mh">🏢 3D — stacked tall</div><p>Chiplets stacked <b>directly on top</b> of each other and fused with <b>hybrid bonding</b> (a copper-to-copper weld with no bumps<a class="cite" href="#ref-17">[17]</a>). Shortest possible connections — but trapping heat between layers is hard.</p></div>
+        </div>
+        <p class="analogy"><b>Analogy →</b> 2.5D is a <b>bungalow</b> — rooms spread out, easy to cool, but a big footprint. 3D is a <b>skyscraper</b> — minimal land, everything close, but the upper floors cook the lower ones. The industry uses both depending on the job.</p>
+        <p class="insight"><b>Why this is THE bottleneck →</b> The processors exist; the world just can't <i>package</i> them fast enough. This packaging capacity (CoWoS) and the stacked memory (HBM) have been sold out into 2026<a class="cite" href="#ref-19">[19]</a> — which is why value is shifting from "who prints the smallest transistor" to <b>"who can assemble and feed it."</b> In hard dollars: HBM memory alone is ~<b>45% of the cost</b> of a flagship AI GPU, versus ~14% for the logic chip itself.<a class="cite" href="#ref-37">[37]</a></p>
+      </div>
+    </div>
+
+    <!-- PHOTONICS -->
+    <div class="panel-card hidden" data-p="photo">
+      <div class="pc-top">
+        <svg class="pc-icon" viewBox="0 0 40 40" fill="none"><path d="M6 20h28" stroke="#5fd3e0" stroke-width="2"/><circle cx="13" cy="20" r="4" fill="#5fd3e0" opacity=".4" stroke="#5fd3e0"/><path d="M22 14l8 6-8 6" stroke="#5fd3e0" stroke-width="2" fill="none"/><path d="M6 12c4 4 4 12 0 16M34 12c-4 4-4 12 0 16" stroke="#5fd3e0" stroke-width="1.3" opacity=".6"/></svg>
+        <div><h3>Silicon Photonics &amp; Co-Packaged Optics</h3></div>
+      </div>
+      <div class="role">Climbs · the interconnect wall · move data with light, not electrons</div>
+      <div class="body">
+        <div>
+          <p>Recall the interconnect wall: copper can't carry data fast over distance without huge power loss. The fix is to stop using electricity for the journey and <b>use light</b> instead — the same idea as the fiber-optic internet, but shrunk down and moved <i>onto the chip's package</i>.</p>
+          <p>Today, that light-conversion happens in bulky plug-in modules at the edge of the board. <b>Co-packaged optics</b> moves it right next to the processor, so signals turn into light immediately. Nvidia's Quantum-X and Spectrum-X switches (built on TSMC's <b>COUPE</b> platform)<a class="cite" href="#ref-20">[20]</a> do this.</p>
+        </div>
+        <div>
+          <div class="statbox"><div class="k">3.5×</div><a class="cite" href="#ref-20">[20]</a><div class="l">more power-efficient than today's plug-in optical modules</div></div>
+          <div class="statbox"><div class="k">light</div><div class="l">carries data with almost no loss over distance, unlike copper</div></div>
+          <div class="statbox"><div class="k">2026</div><div class="l">the year co-packaged optics moves from roadmap to real deployment</div></div>
+        </div>
+      </div>
+
+      <div class="deep">
+        <h4>How does light carry data?</h4>
+        <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">A tiny laser flickers on and off incredibly fast — each flash and gap is a <b>1 or a 0</b>, the same bits as before, just carried by photons instead of electrons. Light through a glass fiber barely weakens over distance and generates far less heat than pushing electricity through copper, so you can move vastly more data for less power.</p>
+        <p class="analogy"><b>Analogy →</b> Copper wiring is like <b>shouting across a noisy room</b> — fine up close, exhausting and garbled across a stadium. Optical is like a <b>laser pointer</b> — it stays crisp and tight no matter the distance.</p>
+        <div class="twocol">
+          <div class="mini good"><div class="mh">⚡ Where it shines</div><p>Wiring together the "AI factories" of a million GPUs, where data must travel rack-to-rack. The enabling layer for the largest AI systems being built now.</p></div>
+          <div class="mini bad"><div class="mh">⚠ The catch</div><p>Aligning lasers and fibers to within a fraction of a hair's width is fiendishly hard, and only a few TSMC/Intel facilities can do it — concentrating yet another chokepoint.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEUROMORPHIC -->
+    <div class="panel-card hidden" data-p="neuro">
+      <div class="pc-top">
+        <svg class="pc-icon" viewBox="0 0 40 40" fill="none"><circle cx="12" cy="14" r="3" stroke="#9b8cff" stroke-width="1.6"/><circle cx="28" cy="12" r="3" stroke="#9b8cff" stroke-width="1.6"/><circle cx="20" cy="26" r="3" stroke="#9b8cff" stroke-width="1.6"/><circle cx="30" cy="28" r="3" stroke="#9b8cff" stroke-width="1.6"/><path d="M14 16l4 8M26 14l-4 10M23 26h4" stroke="#9b8cff" stroke-width="1.3" opacity=".7"/></svg>
+        <div><h3>Neuromorphic &amp; Analog In-Memory</h3></div>
+      </div>
+      <div class="role">Climbs · the memory wall · rethink the whole design</div>
+      <div class="body">
+        <div>
+          <p>The most radical approach: stop separating memory and compute at all. Today's chips shuttle data back and forth between them (the memory wall). The brain doesn't — it stores and processes information <b>in the same place</b>, which is part of why it runs on about <b>20 watts</b><a class="cite" href="#ref-21">[21]</a> while an AI supercomputer burns millions.</p>
+          <p><b>Neuromorphic chips</b> (Intel's Loihi, IBM's NorthPole) copy that idea: many tiny units that each hold a little memory <i>and</i> do a little computing, firing only when there's something to do — rather than marching to a constant clock.</p>
+        </div>
+        <div>
+          <div class="statbox"><div class="k">100–1000×</div><a class="cite" href="#ref-21">[21]</a><div class="l">more energy-efficient than GPUs on certain tasks</div></div>
+          <div class="statbox"><div class="k">~20 W</div><div class="l">the human brain — the efficiency target the field chases</div></div>
+          <div class="statbox"><div class="k">1.15B</div><a class="cite" href="#ref-21">[21]</a><div class="l">neurons in Intel's Hala Point research system</div></div>
+        </div>
+      </div>
+
+      <div class="deep">
+        <h4>The key idea: "fire only when needed"</h4>
+        <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">A normal chip computes on every tick of its clock, whether or not anything changed — like a factory line running full speed even with nothing on the belt. Neuromorphic chips work in <b>spikes</b>: a unit stays silent until it receives a meaningful signal, then briefly fires. Most of the chip is idle most of the time, which is why it sips power.</p>
+        <p class="analogy"><b>Analogy →</b> A standard processor is a <b>sprinter running in place</b> nonstop. A neuromorphic chip is a <b>cat</b> — still and quiet until something moves, then a sudden burst, then still again.</p>
+        <div class="twocol">
+          <div class="mini good"><div class="mh">⚡ Where it shines</div><p>Battery-powered "edge" devices — robots, drones, always-on sensors — where every watt counts. A Loihi-based robot reportedly ran for days on a charge.</p></div>
+          <div class="mini bad"><div class="mh">⚠ The honest catch</div><p>The hardware is ahead of the software. The programming tools are immature and these "spiking" networks are hard to train, so this shines in niches — <b>not</b> yet a GPU replacement.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NODE -->
+    <div class="panel-card hidden" data-p="node">
+      <div class="pc-top">
+        <svg class="pc-icon" viewBox="0 0 40 40" fill="none"><rect x="14" y="9" width="12" height="22" rx="2" fill="#f4d08a" opacity=".25" stroke="#f4d08a" stroke-width="1.6"/><path d="M14 15h12M14 20h12M14 25h12" stroke="#f4d08a" stroke-width="1.3"/><path d="M10 12v16M30 12v16" stroke="#f4d08a" stroke-width="1.6"/></svg>
+        <div><h3>The 2nm Node &amp; Gate-All-Around</h3></div>
+      </div>
+      <div class="role">The classical lever — not dead, just harder and pricier</div>
+      <div class="body">
+        <div>
+          <p>The old playbook — just shrink the transistor — isn't dead, only slowing. And making it work now requires reinventing the transistor's shape. A "<b>node</b>" (like "2nm" or "3nm") is roughly a generation of manufacturing; smaller numbers mean denser, more efficient chips.</p>
+          <p>TSMC's <b>2nm</b> generation reached mass production in late 2025<a class="cite" href="#ref-22">[22]</a>, introducing a new transistor design called <b>Gate-All-Around</b> — and a follow-on, <b>A16</b> (~late 2026), adds a clever power-delivery trick.</p>
+        </div>
+        <div>
+          <div class="statbox"><div class="k">~10–15%</div><a class="cite" href="#ref-22">[22]</a><div class="l">speed gain of 2nm over 3nm — and the gains shrink each generation</div></div>
+          <div class="statbox"><div class="k">65–75%</div><a class="cite" href="#ref-22">[22]</a><div class="l">early 2nm yield — a lead rivals haven't matched</div></div>
+          <div class="statbox"><div class="k">$48.5B</div><div class="l">cost of TSMC's next (1.4nm) factory<a class="cite" href="#ref-13">[13]</a> — why few can compete</div></div>
+        </div>
+      </div>
+
+      <div class="deep">
+        <h4>The two innovations, in plain terms</h4>
+        <div class="twocol">
+          <div class="mini"><div class="mh">🔲 Gate-All-Around (GAA)</div><p>The "gate" is the part that switches a transistor on and off. As transistors shrank, the gate lost control and current started leaking. GAA <b>wraps the gate around the channel on all four sides</b> instead of three — gripping it tightly again so it switches cleanly and wastes less power.</p></div>
+          <div class="mini"><div class="mh">🔌 Backside power delivery</div><p>Normally, power and data wires compete for space on top of the chip. This moves the <b>power wiring underneath</b>, freeing the top purely for data — like moving a building's plumbing to the basement so the floors aren't cluttered with pipes.</p></div>
+        </div>
+        <p class="insight"><b>Why this belongs on the list →</b> Each new node now delivers <i>smaller</i> gains at <i>sharply</i> higher cost. The shrinking payoff from shrinking is <b>exactly why</b> the other four approaches above exist — the industry can no longer rely on this lever alone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. SIGNATURE: SCALE ===================== -->
+<section id="scale">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">08</span><h2>To feel wafer-scale, look at the silicon</h2></div>
+    <p class="sec-sub">Specs are abstract. Area isn't. The gold square is the Cerebras WSE-3 drawn to scale against a flagship GPU die (the small cyan square). Toggle the metric to see how the gap shifts.</p>
+
+    <div class="scale-stage">
+      <div class="silicon-vis">
+        <div class="wse-area">
+          <span class="wse-label">CEREBRAS WSE-3 · 46,225 mm²<a class="cite" href="#ref-15">[15]</a></span>
+          <div class="h100-area">●</div>
+          <div class="h100-tip"><b>NVIDIA H100</b><br>814 mm² · the largest a single exposure can print</div>
+        </div>
+      </div>
+      <div class="scale-readout">
+        <span class="eyebrow">Wafer-scale vs. reticle-limited</span>
+        <h3 id="cmp-title">Silicon area</h3>
+        <div id="cmp-rows">
+          <div class="cmp-row"><span class="lbl">Cerebras WSE-3</span><span class="a" id="cmp-a">46,225 mm²</span></div>
+          <div class="cmp-row"><span class="lbl">NVIDIA H100</span><span class="b" id="cmp-b">814 mm²</span></div>
+          <div class="cmp-row"><span class="lbl">Ratio</span><span class="mono" id="cmp-r" style="color:var(--ink)">~57× larger</span></div>
+        </div>
+        <div class="toggle-row" id="metric-toggle">
+          <button class="on" data-m="area">Area</button>
+          <button data-m="trans">Transistors</button>
+          <button data-m="cores">Cores</button>
+          <button data-m="mem">On-chip memory</button>
+        </div>
+        <p style="font-size:12.5px;color:var(--ink-3);margin:16px 0 0">Hover the small cyan square to label it. The point isn't that one "beats" the other — they're different answers. A GPU is flexible and used everywhere; the wafer-scale chip gives up that flexibility in exchange for moving data internally at enormous speed (<b>bandwidth</b>) — which is exactly what today's largest AI models are starving for.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 9. ECONOMICS / FINANCE ===================== -->
+<section id="econ">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">09</span><h2>The economics — follow the money</h2></div>
+    <p class="sec-sub">Now the part an analyst actually cares about: where the dollars come from, where they pile up, and who keeps them. Real figures, sourced to filings and primary reporting. (All dollar figures USD; "gross margin" = revenue minus cost of goods, as a %.)</p>
+
+    <!-- A. the bottleneck flow (kept) -->
+    <div class="flow" id="flow">
+      <div class="stage" data-s="design"><div class="ico">🧠</div><div class="nm">Chip Design</div><div class="st">Nvidia, AMD, Cerebras</div></div>
+      <div class="stage" data-s="fab"><div class="ico">🏭</div><div class="nm">Making the chip</div><div class="st">TSMC · 2nm / 3nm</div></div>
+      <div class="stage bottleneck" data-s="pkg"><span class="badge">⚠ The real bottleneck</span><div class="ico">📦</div><div class="nm">Packaging + memory</div><div class="st">CoWoS · HBM</div></div>
+      <div class="stage" data-s="deploy"><div class="ico">⚡</div><div class="nm">Running it</div><div class="st">AI data centers</div></div>
+    </div>
+    <div class="flow-detail" id="flow-detail">
+      <b>The choke point is assembly and memory — not the processor.</b> The processor chips can be made; what's in desperately short supply is the <b>advanced packaging</b> (called <b>CoWoS</b>) that bolts a processor to its stacked <b>memory</b> (called <b>HBM</b>)<a class="cite" href="#ref-17">[17]</a><a class="cite" href="#ref-18">[18]</a> — and that packaging has been <span class="hl">sold out into 2026</span>. Tap any stage above to see why.
+    </div>
+
+    <!-- B. capex wave -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">🌊</span>Where the money comes from: the capex tidal wave</h3>
+      <p class="lead-p">All of this is funded by a handful of "hyperscalers" (the giant cloud companies) racing to build AI data centers. In 2026 the four biggest plan to spend roughly <b>$700 billion combined</b> — up about <b>69% in one year</b>, the largest infrastructure build-out in tech history.<a class="cite" href="#ref-38">[38]</a></p>
+      <div class="capex-wrap">
+        <div class="capex-row"><span class="cl">Amazon</span><div class="capex-bar-track"><div class="capex-bar-fill" style="width:100%"></div></div><span class="cv">~$200B</span></div>
+        <div class="capex-row"><span class="cl">Microsoft</span><div class="capex-bar-track"><div class="capex-bar-fill" style="width:95%"></div></div><span class="cv">~$190B</span></div>
+        <div class="capex-row"><span class="cl">Alphabet</span><div class="capex-bar-track"><div class="capex-bar-fill" style="width:92%"></div></div><span class="cv">~$185B</span></div>
+        <div class="capex-row"><span class="cl">Meta</span><div class="capex-bar-track"><div class="capex-bar-fill" style="width:68%"></div></div><span class="cv">$125–145B</span></div>
+        <div class="capex-total">Combined 2026 guidance: <b>~$700–725 billion</b>, +69% YoY. For scale, that single-year figure rivals the GDP of a mid-sized country. And it isn't the peak: Evercore and Bank of America project 2027 spending crosses <b>$1 trillion</b>.<a class="cite" href="#ref-38">[38]</a></div>
+      </div>
+      <p class="lead-p" style="margin-top:12px">The analyst's worry, in one line: this is <b>spending</b>, and the matching <b>AI revenue</b> hasn't yet caught up to the depreciation that $700B/year creates. When Meta raised its number, the stock fell ~6–9% the same day — the first real sign investor patience isn't infinite.<a class="cite" href="#ref-38">[38]</a></p>
+    </div>
+
+    <!-- C. unit economics / BOM -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">🔬</span>Unit economics: what a flagship GPU really costs</h3>
+      <p class="lead-p">This is the teardown analysts love. Independent bill-of-materials estimates put the cost to <i>build</i> one Nvidia B200 (Blackwell) at roughly <b>$6,400</b> — yet it sells for <b>$30,000–40,000</b>. Notice what dominates the cost: <b>memory and packaging</b>, not the logic chip. The economics literally prove the bottleneck.<a class="cite" href="#ref-37">[37]</a></p>
+      <div class="bom">
+        <div class="bom-side">
+          <div style="font-family:'Space Grotesk';font-size:12px;color:var(--ink-3);margin-bottom:8px;letter-spacing:.04em">COST TO BUILD · ~$6,400</div>
+          <div class="bom-stack">
+            <div class="bseg" style="background:#5fd3e0"><span>HBM memory</span><span>$2,900 <span class="bpct">45%</span></span></div>
+            <div class="bseg" style="background:#c9794e"><span>CoWoS packaging</span><span>$1,100 <span class="bpct">17%</span></span></div>
+            <div class="bseg" style="background:#e0a050;color:#1a1606"><span>Packaging yield loss</span><span>~$1,000 <span class="bpct">16%</span></span></div>
+            <div class="bseg" style="background:#e8b04b"><span>Logic die</span><span>$900 <span class="bpct">14%</span></span></div>
+            <div class="bseg" style="background:#9b8cff"><span>Other</span><span>~$500 <span class="bpct">8%</span></span></div>
+          </div>
+        </div>
+        <div class="bom-side">
+          <div class="bom-arrow">— sold for —</div>
+          <div class="bom-sell">
+            <div class="bs-k">$30,000–40,000</div>
+            <div class="bs-l">effective price per GPU (range $30K–55K)</div>
+          </div>
+          <div class="bom-margin">implied chip-level gross margin: <b>~82%</b><a class="cite" href="#ref-37">[37]</a></div>
+          <p style="font-size:12px;color:var(--ink-3);margin:12px 0 0">Caveat an analyst would add: most revenue ships as full servers/racks at lower margins, so Nvidia's <i>realized</i> margin is lower than this chip-level figure — but still extraordinary.</p>
+        </div>
+      </div>
+      <p class="lead-p" style="margin-top:12px"><b>The punchline:</b> ~45% of the cost of an AI GPU is the stacked memory (HBM), and another ~33% is packaging and its yield losses. The "chip" everyone talks about — the logic die — is barely 14%. That's why the memory and packaging companies suddenly command enormous pricing power.<a class="cite" href="#ref-37">[37]</a></p>
+    </div>
+
+    <!-- D. who earns the dollar -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">💰</span>Who actually earns the AI dollar? (latest filings)</h3>
+      <p class="lead-p">Follow the margins. These are the most recent reported figures (early 2026) for the key players in the stack — the kind of table that tells you where durable profit pools sit.</p>
+      <table class="fin-table">
+        <thead>
+          <tr><th>Company</th><th>Role</th><th>Latest revenue</th><th>Gross margin</th><th>Other</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>NVIDIA</td><td style="text-align:left;font-weight:400;font-family:inherit;color:var(--ink-3)">Chip design</td><td class="big">$81.6B<span style="color:var(--ink-3);font-size:11px"> /qtr</span></td><td class="pos">75.0%</td><td style="color:var(--ink-3)">+85% YoY<a class="cite" href="#ref-33">[33]</a></td></tr>
+          <tr><td>TSMC</td><td style="text-align:left;font-weight:400;font-family:inherit;color:var(--ink-3)">Manufacturing</td><td class="big">$35.9B<span style="color:var(--ink-3);font-size:11px"> /qtr</span></td><td class="pos">66.2%</td><td style="color:var(--ink-3)">50.5% net<a class="cite" href="#ref-34">[34]</a></td></tr>
+          <tr><td>SK hynix</td><td style="text-align:left;font-weight:400;font-family:inherit;color:var(--ink-3)">HBM memory</td><td class="big">~$35.5B<span style="color:var(--ink-3);font-size:11px"> /qtr</span></td><td class="pos">72% op.</td><td style="color:var(--ink-3)">~57% HBM share<a class="cite" href="#ref-35">[35]</a></td></tr>
+          <tr><td>AMD</td><td style="text-align:left;font-weight:400;font-family:inherit;color:var(--ink-3)">Chip design (#2)</td><td class="big">$34.6B<span style="color:var(--ink-3);font-size:11px"> /yr</span></td><td class="pos">~52%</td><td style="color:var(--ink-3)">FY25<a class="cite" href="#ref-36">[36]</a></td></tr>
+        </tbody>
+      </table>
+      <p class="fin-cap">Revenue periods differ (Nvidia/TSMC/SK hynix shown quarterly; AMD full-year FY25). "op." = operating margin. SK hynix figures converted from Korean won. These are among the highest margins in all of hardware — the signature of companies sitting on genuine chokepoints.</p>
+    </div>
+
+    <!-- E. market sizes -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">📈</span>The markets, sized</h3>
+      <p class="lead-p">How big are the prizes everyone is fighting over? Three numbers an analyst keeps front of mind:</p>
+      <div class="tam-grid">
+        <div class="tam">
+          <div class="tname">AI ACCELERATOR CHIPS</div>
+          <div class="tnow">~$65B</div>
+          <div class="tarrow">↓ 2025 → 2028</div>
+          <div class="tfut">$120B+</div>
+          <div class="tnote">NVIDIA holds ~80% share<a class="cite" href="#ref-42">[42]</a></div>
+        </div>
+        <div class="tam">
+          <div class="tname">HBM MEMORY</div>
+          <div class="tnow">~$55B</div>
+          <div class="tarrow">↓ 2023: $4B → 2030</div>
+          <div class="tfut">$130B</div>
+          <div class="tnote">~33× growth in 7 years<a class="cite" href="#ref-39">[39]</a></div>
+        </div>
+        <div class="tam">
+          <div class="tname">ALL SEMICONDUCTORS</div>
+          <div class="tnow">~$975B</div>
+          <div class="tarrow">↓ 2026, approaching</div>
+          <div class="tfut">$1 trillion</div>
+          <div class="tnote">+25% YoY, memory leads<a class="cite" href="#ref-39">[39]</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- E2. the crowding-out mechanism -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">⚖️</span>The mechanism worth understanding: why memory ate everything</h3>
+      <p class="lead-p">Here's the second-order insight most coverage misses. Building HBM memory consumes roughly <b>3× the wafer capacity per bit</b> of ordinary memory (DDR5), because the chips are larger and stacking lowers yields. So every wafer redirected to feed AI GPUs is ~3 wafers pulled out of the ordinary memory supply.<a class="cite" href="#ref-43">[43]</a></p>
+      <p class="lead-p">The result is a chain reaction an analyst can trace end to end: HBM is sold out through 2026<a class="cite" href="#ref-43">[43]</a> → ordinary memory (DRAM) gets crowded out → <b>DRAM contract prices jumped ~90% in a single quarter</b> in early 2026<a class="cite" href="#ref-43">[43]</a> → the cost shows up in everyday products, with Nvidia even cutting some gaming-GPU production <b>30–40%</b> as memory is diverted to data centers.<a class="cite" href="#ref-43">[43]</a> New fabs won't add meaningful supply until <b>2027 or later</b>, so the squeeze is structural, not a quick blip.<a class="cite" href="#ref-43">[43]</a></p>
+      <p class="analogy" style="margin-bottom:0"><b>The takeaway →</b> This is why the memory makers (SK hynix, Samsung, Micron — ~95% of supply) suddenly print record margins, and why "the price of RAM in your laptop" is now downstream of "how many AI data centers got built." One bottleneck, rippling outward.</p>
+    </div>
+
+    <!-- F. live case study: Cerebras IPO -->
+    <div class="fin-block">
+      <h3><span class="fh-ico">🔔</span>The live experiment: Cerebras's IPO</h3>
+      <p class="lead-p">In May 2026, wafer-scale pioneer Cerebras went public — the cleanest real-money test yet of whether a credible Nvidia challenger can command a premium. It's a perfect analyst case study, because the bull case and the red flags sit right next to each other.</p>
+      <div class="ipo-box">
+        <div class="ipo-head">
+          <div>
+            <span class="ipo-tk">CBRS · Nasdaq</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink-3);max-width:360px;text-align:right">Priced at $185 (above a range first set at $115–125), opened at $350 and spiked to $385 intraday, then closed its first day up <b style="color:var(--green)">68%</b> at $311 — a ~<b style="color:var(--gold-soft)">$66B</b> market cap (~$95B fully diluted).<a class="cite" href="#ref-41">[41]</a> By mid-June it had cooled to ~$214 (~$50B).<a class="cite" href="#ref-41">[41]</a></div>
+        </div>
+        <div class="ipo-metrics">
+          <div class="im"><div class="imk">$510M</div><div class="iml">FY25 revenue (+76% YoY)<a class="cite" href="#ref-40">[40]</a></div></div>
+          <div class="im"><div class="imk">~67×</div><div class="iml">trailing price-to-sales<a class="cite" href="#ref-41">[41]</a></div></div>
+          <div class="im"><div class="imk">$24.6B</div><div class="iml">order backlog<a class="cite" href="#ref-40">[40]</a></div></div>
+          <div class="im"><div class="imk">$20B+</div><div class="iml">OpenAI compute deal<a class="cite" href="#ref-42">[42]</a></div></div>
+        </div>
+        <div class="bull-bear">
+          <div class="bb bull">
+            <h5>▲ THE BULL CASE</h5>
+            <ul>
+              <li><b>Hyper-growth:</b> revenue up 76% to $510M, with a $24.6B backlog dwarfing it.</li>
+              <li><b>Anchor customer:</b> a $20B+ multi-year OpenAI deal for 750 MW of inference compute.</li>
+              <li><b>Right trend:</b> AI is shifting from training to <i>inference</i> (~two-thirds of workloads in 2026) — Cerebras's sweet spot.</li>
+            </ul>
+          </div>
+          <div class="bb bear">
+            <h5>▼ WHAT AN ANALYST WORRIES ABOUT</h5>
+            <ul>
+              <li><b>Concentration:</b> just two UAE-linked customers were <b>86%</b> of 2025 revenue.<a class="cite" href="#ref-40">[40]</a></li>
+              <li><b>Profit mirage:</b> the $238M "net income" was a one-time $363M accounting gain — the real operating result was a <b>$146M loss</b>.<a class="cite" href="#ref-40">[40]</a></li>
+              <li><b>Thin margins:</b> just <b>39% gross margin</b> in 2025 — versus Nvidia's 75% — so even at scale the economics are far less rich than the leader's.<a class="cite" href="#ref-41">[41]</a></li>
+              <li><b>Single supplier:</b> 100% dependent on TSMC, with no guaranteed allocation. And at the first-day close it traded at <b>~130× sales</b>, pricing in near-flawless execution.<a class="cite" href="#ref-41">[41]</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="lead-p" style="margin-top:12px"><b>Snapshot caveat:</b> Cerebras reports its first results as a public company on June 23, 2026 — so these figures are a debut-moment picture that the market is about to re-price on real numbers.<a class="cite" href="#ref-41">[41]</a></p>
+    </div>
+
+    <!-- G. the bubble question -->
+    <div class="deep" style="margin-top:22px">
+      <h4>The question every analyst is really asking: is this a bubble?</h4>
+      <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">Stack the facts and the tension is obvious. On one side: ~$700B of annual spending, ~80% gross margins, sold-out supply chains, and a memory "supercycle" some compare to the 1990s boom. On the other: AI <i>revenue</i> that hasn't yet caught up to the <b>depreciation</b> that all that hardware creates, GPUs that are short-lived assets (roughly two-thirds of Microsoft's capex went to fast-depreciating chips), and valuations pricing in flawless execution.<a class="cite" href="#ref-38">[38]</a></p>
+      <p class="analogy" style="margin-bottom:0"><b>The honest answer →</b> Nobody knows yet. The bull says compute is the new oil and whoever's short on it loses the decade. The bear says synchronized $700B bets by four firms create correlated risk, and that memory prices — like every cycle before — eventually correct. Both can cite hard numbers. That's exactly what makes it worth watching rather than declaring.</p>
+    </div>
+
+    <div class="deep" style="margin-top:16px">
+      <h4>What an analyst actually watches from here</h4>
+      <p style="font-size:14.5px;color:var(--ink-2);margin:0 0 10px">Rather than calling a top, these are the specific signals that would confirm or break the thesis — the dials a buy-side analyst keeps on the desk:</p>
+      <ul style="font-size:14px;color:var(--ink-2);margin:0;padding-left:18px;line-height:1.7">
+        <li><b>AI revenue vs. depreciation:</b> do cloud AI run-rates start covering the cost of the hardware being written down? The single most important number.<a class="cite" href="#ref-38">[38]</a></li>
+        <li><b>Hyperscaler discipline:</b> any guide-down in capex (Meta's stock already fell ~6–9% on a raise) would signal the demand side blinking.<a class="cite" href="#ref-38">[38]</a></li>
+        <li><b>Memory ASPs:</b> the first quarter HBM/DRAM prices stop rising marks the cycle turning — historically the most reliable tell.<a class="cite" href="#ref-43">[43]</a></li>
+        <li><b>Custom silicon:</b> how fast Google's TPUs and Amazon's Trainium take share from Nvidia — the threat to that 80% / 75%-margin position.<a class="cite" href="#ref-33">[33]</a></li>
+        <li><b>Power, not chips:</b> the binding constraint is shifting from GPU supply to electricity and grid interconnects — watch the energy deals.<a class="cite" href="#ref-38">[38]</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 5. GEOPOLITICS TIMELINE ===================== -->
+<section id="geo">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num mono">10</span><h2>The layer no spec sheet shows: politics</h2></div>
+    <p class="sec-sub">Computing power has become national power — so chips are now a tool of statecraft, like oil or weapons. But the recent drama only makes sense with the full backstory. Below, two intertwined threads over the last decade: the <b style="color:var(--cyan)">AI technology boom</b> and the <b style="color:var(--red)">US–China chip war</b> — which grew up together.</p>
+
+    <div class="fund-intro" style="margin-bottom:22px">
+      <b>Why are chips a weapon?</b> Whoever leads in AI may lead in economic and military power — and AI runs on the most advanced chips. The US and its allies happen to control the critical chokepoints: chip designs (Nvidia), the manufacturing (TSMC in Taiwan), and above all the <b>EUV machines</b> (ASML, the Netherlands) needed to make the very best chips. So the US has tried to <b>restrict China's access</b> to those chips and tools, hoping to slow its AI progress. China's response — and whether the strategy is even working — is the genuinely surprising part.
+    </div>
+
+    <div class="tl-filter" id="tl-filter">
+      <button class="on" data-f="all">Show both threads</button>
+      <button data-f="tech">AI technology only</button>
+      <button data-f="geo">Chip-war politics only</button>
+    </div>
+    <div class="tl-legend">
+      <span><span class="sw"></span> AI &amp; chip technology</span>
+      <span><span class="sw geo"></span> Policy &amp; geopolitics</span>
+    </div>
+
+    <div class="timeline" id="timeline">
+      <div class="tl-track"></div>
+
+      <!-- ERA: the spark -->
+      <div class="tl-era">
+        <div class="ename">2012–2017 · The spark</div>
+        <div class="edesc">AI quietly comes alive on gaming chips — years before most people noticed.</div>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">2012</div>
+        <h4>AlexNet: AI wakes up on GPUs</h4>
+        <p>A research team uses two Nvidia gaming <b>GPUs</b> to win an image-recognition contest by a stunning margin<a class="cite" href="#ref-7">[7]</a> — proving that graphics chips could power AI. This is the spark that eventually made Nvidia one of the world's most valuable companies.</p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">2016</div>
+        <h4>The wafer-scale bet begins</h4>
+        <p>Nvidia hands the first DGX-1 AI supercomputer to a young lab called OpenAI.<a class="cite" href="#ref-7">[7]</a><a class="cite" href="#ref-16">[16]</a> The same year, a startup named <b>Cerebras</b> is founded on a contrarian idea: build one chip the size of a whole wafer (the technology from Section 07).</p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">2017</div>
+        <h4>The "Transformer" is invented</h4>
+        <p>Google researchers publish a new AI design called the <b>Transformer</b>.<a class="cite" href="#ref-23">[23]</a> It's the architecture behind ChatGPT and essentially every modern AI — and it's enormously hungry for the kind of parallel math GPUs excel at. The demand engine is now built.</p>
+      </div>
+
+      <!-- ERA: the war opens -->
+      <div class="tl-era">
+        <div class="ename">2018–2020 · The chip war opens</div>
+        <div class="edesc">The US starts treating chips as national-security leverage against China.</div>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">2018</div>
+        <h4>The first shot: ZTE</h4>
+        <p>The US briefly bans American companies from selling to <b>ZTE</b>, a Chinese telecom firm<a class="cite" href="#ref-24">[24]</a> — nearly killing it overnight because it depended on US chips. The episode is a wake-up call in Beijing: relying on foreign chips is a strategic vulnerability.</p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">2019</div>
+        <h4>The big one: Huawei blacklisted</h4>
+        <p>The US adds <b>Huawei</b> — China's tech champion — to the "Entity List,"<a class="cite" href="#ref-24">[24]</a> cutting it off from US technology. China responds by making chip self-sufficiency a top <i>national-security</i> priority, pouring in over $100 billion.<a class="cite" href="#ref-24">[24]</a></p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">2020</div>
+        <h4>China's top factory is restricted</h4>
+        <p>The US restricts <b>SMIC</b>, China's most advanced chip factory<a class="cite" href="#ref-25">[25]</a>, blocking its access to the best Western tools — including, critically, the EUV machines needed for cutting-edge chips. China is now boxed out of the frontier… on paper.</p>
+      </div>
+
+      <!-- ERA: the boom -->
+      <div class="tl-era">
+        <div class="ename">2022 · Everything goes vertical</div>
+        <div class="edesc">AI explodes into public view — and the policy walls go up the same year.</div>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">Aug 2022</div>
+        <h4>The US tries to bring chips home: the CHIPS Act</h4>
+        <p>Worried that ~90% of the most advanced chips are made in Taiwan<a class="cite" href="#ref-26">[26]</a>, the US commits <b>$52.7 billion</b> to rebuild domestic chipmaking.<a class="cite" href="#ref-26">[26]</a> (Three decades ago the US made ~37% of the world's chips; by 2022, ~12%.)<a class="cite" href="#ref-26">[26]</a></p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">Oct 7, 2022</div>
+        <h4>The landmark blockade</h4>
+        <p>The US issues its broadest-ever chip rule: no advanced AI chips, and no equipment to make them, for China.<a class="cite" href="#ref-27">[27]</a> This is the moment export controls became a true technology blockade — the foundation everything since builds on.</p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">Nov 2022</div>
+        <h4>ChatGPT lands — demand goes nuclear</h4>
+        <p>OpenAI releases <b>ChatGPT</b>; it hits 100 million users in two months.<a class="cite" href="#ref-23">[23]</a> Suddenly every company on Earth wants AI, every AI needs GPUs, and the most advanced chips become the most fought-over hardware on the planet. The stakes of the chip war just multiplied.</p>
+      </div>
+
+      <!-- ERA: backfire? -->
+      <div class="tl-era">
+        <div class="ename">2023–2026 · Does the blockade work?</div>
+        <div class="edesc">China finds ways around the wall — and the policy starts to wobble.</div>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">2023</div>
+        <h4>The Mate 60 shock</h4>
+        <p>Huawei releases a phone with an advanced <b>7nm chip</b> — made <i>domestically</i> by SMIC<a class="cite" href="#ref-28">[28]</a>, despite the blockade, using DUV multi-patterning. Washington is stunned: the controls were supposed to make this impossible. The "are they even working?" debate begins in earnest.</p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">Late 2025</div>
+        <h4>TSMC starts "2nm" production</h4>
+        <p>The most advanced chip generation yet enters mass production — using the new Gate-All-Around transistor design from earlier<a class="cite" href="#ref-22">[22]</a> — with early quality (yield) rates rivals haven't been able to match. The technical lead stays with Taiwan.</p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">Dec 2025</div>
+        <h4>The surprise reversal on the H200</h4>
+        <p>The <b>H200</b> is one of Nvidia's most powerful AI chips. After banning its sale to China, the US administration abruptly signals it <i>will</i> allow it — reportedly in exchange for a ~25% cut of the revenue going to the US government.<a class="cite" href="#ref-29">[29]</a> An unusual mix of trade policy and national security.</p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">Jan 13–15, 2026</div>
+        <h4>The rule is made official — and called incoherent</h4>
+        <p>A formal rule lets Nvidia's H200 and AMD's competing chip go to China only with case-by-case approval, a 25% tariff, and quantity limits.<a class="cite" href="#ref-29">[29]</a> Critics on both sides hated it: too loose for security hawks, too restrictive for industry. Pleasing no one.</p>
+      </div>
+
+      <div class="tl-item geo"><div class="tl-dot"></div>
+        <div class="tl-date">Jan 2026</div>
+        <h4>The twist: China says "no thanks"</h4>
+        <p>In a remarkable reversal, reports say Chinese authorities told companies <i>not</i> to buy the very chips the US had just approved<a class="cite" href="#ref-30">[30]</a> — pushing them to use <b>domestic</b> chips instead, to build self-reliance. The buyer refused the sale.</p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">Q1 2026</div>
+        <h4>The "loophole": China routes around the ban</h4>
+        <p>Remember DUV — the older, unrestricted printing light? Analysis shows China's foundry (SMIC) and Huawei using DUV with <b>multi-patterning</b> (printing a layer in several passes) to make near-cutting-edge AI chips <i>without</i> the banned EUV machines. It's slower and more wasteful — only ~20% of chips come out usable — but it works, and it's scaling.<a class="cite" href="#ref-31">[31]</a></p>
+      </div>
+
+      <div class="tl-item tech"><div class="tl-dot"></div>
+        <div class="tl-date">Apr 2026</div>
+        <h4>Cerebras files to go public</h4>
+        <p>The wafer-scale pioneer files paperwork for a stock-market debut (an "<b>S-1</b>" is the document a company files before an IPO), targeting a ~$22–25B value on ~$510M of 2025 revenue.<a class="cite" href="#ref-16">[16]</a> A real-money test of whether the giant-chip bet works as a business.</p>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:8px">
+      <b>The deeper, uncomfortable question →</b> Step back and look at the full decade: each escalation since 2018 was meant to slow China down — yet it may have <i>forced</i> China to build its own industry, pouring money into domestic factories and equipment makers (one, SiCarrier, is openly trying to build a "Chinese ASML"<a class="cite" href="#ref-32">[32]</a>) that might never have existed otherwise. Huawei was nearly dead in 2019; by 2023 it shipped an advanced chip anyway. So did the controls slow China down, or speed up its independence? Genuinely contested — and a far better question to debate than to answer with confidence.
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCOURSE ===================== -->
+<section id="talk">
+  <div class="wrap">
+    <div class="discourse">
+      <h3>Worth arguing about — I don't think these are settled</h3>
+      <div class="q-grid">
+        <div class="q"><span class="qn">On wafer-scale</span>Is it a durable architecture, or a brilliant niche for bandwidth-bound inference that GPUs eventually absorb? Cerebras's IPO will test the thesis in public.</div>
+        <div class="q"><span class="qn">On the bottleneck</span>If packaging and memory — not transistors — are the real constraint, should we even still call this a "Moore's Law" story?</div>
+        <div class="q"><span class="qn">On the money</span>~$700B in annual capex against AI revenue that hasn't caught up to the depreciation. Disciplined long-term investment, or the late innings of a bubble? Both sides cite hard numbers.</div>
+      </div>
+      <p style="margin:18px 0 0;color:var(--ink-2);font-size:14.5px">I built this to learn in public and sharpen my own thinking — if you work in any of these areas and I've oversimplified something, I genuinely want the correction. What did I miss?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOURCES ===================== -->
+<div class="wrap">
+  <div class="sources">
+    <h4>References</h4>
+    <p style="font-size:12px;color:var(--ink-3);margin:0 0 16px">Every figure, quote, and factual claim above is keyed to a numbered source here. Click any <span class="cite" style="vertical-align:baseline">[n]</span> in the text to jump to its source.</p>
+    <ol class="ref-list ref-cols">
+  <li id="ref-1"><b>Physics/Chemistry LibreTexts &amp; OpenStax</b> — band theory of conductors, insulators &amp; semiconductors; doping and carriers</li>
+  <li id="ref-2"><b>WaferPro / UniversityWafer / SemiEngineering</b> — sand-to-silicon: silica reduction at ~2,000°C, metallurgical vs. electronic-grade purity</li>
+  <li id="ref-3"><b>Alfa Chemistry / WaferWorld</b> — Czochralski crystal growth, ingot/boule, wafer slicing &amp; sizes</li>
+  <li id="ref-4"><b>AllAboutCircuits / Electrical Academia</b> — the PN junction diode as a one-way current valve</li>
+  <li id="ref-5"><b>Explain That Stuff / TechTarget</b> — how transistors and MOSFETs switch (source/gate/drain)</li>
+  <li id="ref-6"><b>Intel / Britannica</b> — Moore's Law (1965, Gordon Moore) and Dennard scaling</li>
+  <li id="ref-7"><b>NVIDIA / ACM / Understanding AI</b> — AlexNet (2012), CUDA, GPUs for AI, parallel vs. serial compute</li>
+  <li id="ref-8"><b>Construction Physics (Brian Potter) / IEEE</b> — interconnect layers (~15 metal levels) and on-chip copper wiring</li>
+  <li id="ref-9"><b>BlackRidge Research / Entech Online</b> — wafer fabrication flow: lithography, etch, deposition, dicing</li>
+  <li id="ref-10"><b>Rapidus / Technology.org / ASML</b> — EUV lithography: 13.5nm light, ~50,000 tin droplets/sec, vacuum &amp; Mo/Si mirrors, ASML sole supplier</li>
+  <li id="ref-11"><b>Power Electronics News / TrendForce / Waferscope</b> — DUV: 193nm wavelength, multi-patterning, cheaper &amp; widely available</li>
+  <li id="ref-12"><b>Tom's Hardware / PatentPC / IMD</b> — fab cost (~$20B+), build time (Taiwan ~19mo vs US ~38mo), cleanroom standards</li>
+  <li id="ref-13"><b>TweakTroniks / TrendForce</b> — TSMC's planned 1.4nm fab cost (~$48.5B)</li>
+  <li id="ref-14"><b>Peak FLOPS / WikiChip / arXiv 2503.11698</b> — Cerebras field stitching: 84 reticle tiles, &gt;1M cross-scribe wires</li>
+  <li id="ref-15"><b>arXiv 2503.11698 / Cerebras</b> — WSE-3: 46,225 mm², 4 trillion transistors, 900,000 cores, 44GB SRAM, 21 PB/s, ~1.5% redundant cores, 300+ VRMs, ~23kW</li>
+  <li id="ref-16"><b>Introl / Cerebras S-1 reporting</b> — Cerebras deployments (Meta, Mayo Clinic, DoD), 2026 IPO (~$22–25B target, ~$510M FY25 revenue)</li>
+  <li id="ref-17"><b>Lam Research / Siemens / Resonac</b> — advanced packaging: interposer, TSVs, 2.5D vs 3D, hybrid bonding</li>
+  <li id="ref-18"><b>Wevolver / PatSnap</b> — HBM stacked-memory architecture; CoWoS structure</li>
+  <li id="ref-19"><b>TrendForce via AInvest / TechNews</b> — CoWoS demand ~370k→1M units 2024–2026; HBM/DRAM price surge; sold out into 2026</li>
+  <li id="ref-20"><b>NVIDIA Newsroom / IDTechEx</b> — co-packaged optics &amp; silicon photonics: Quantum-X/Spectrum-X, TSMC COUPE, ~3.5× efficiency</li>
+  <li id="ref-21"><b>Intel Newsroom / IBM Think</b> — neuromorphic: Loihi/Hala Point (1.15B neurons), NorthPole, ~100–1000× efficiency, brain ~20W</li>
+  <li id="ref-22"><b>Tom's Hardware / SemiWiki / TechSpot</b> — TSMC N2 (2nm) volume production late 2025, GAA nanosheets, ~10–15% gain, 65–75% yield; A16 backside power</li>
+  <li id="ref-23"><b>NVIDIA blog / arXiv (AI history)</b> — Transformer (2017), GPT-3, ChatGPT (Nov 2022, 100M users in 2 months), A100</li>
+  <li id="ref-24"><b>CSIS / China Leadership Monitor</b> — ZTE ban (2018); Huawei Entity List (2019); China's $100B+ self-sufficiency push</li>
+  <li id="ref-25"><b>Congress.gov / Wiley</b> — SMIC added to Entity List (Dec 2020); presumption of denial</li>
+  <li id="ref-26"><b>CHIPS &amp; Science Act / CFR</b> — CHIPS Act (Aug 2022, $52.7B); US chip share ~37% (1990) → ~12% (2022); Taiwan ~90% of advanced chips</li>
+  <li id="ref-27"><b>BIS / Consumer Electronics Daily</b> — Oct 7, 2022 export controls: broad ban on advanced AI chips &amp; tools to China</li>
+  <li id="ref-28"><b>CSIS / Law &amp; Economics Center</b> — Huawei Mate 60 (2023): domestic 7nm via SMIC DUV multi-patterning</li>
+  <li id="ref-29"><b>Council on Foreign Relations / Introl / CNBC</b> — Dec 2025 H200 reversal; Jan 2026 BIS rule (25% tariff, volume caps, case-by-case)</li>
+  <li id="ref-30"><b>Reuters / industry reporting</b> — Jan 2026: Chinese authorities discourage purchases of approved US chips</li>
+  <li id="ref-31"><b>AEI (Fedasiuk &amp; Torres) via A. Gautam</b> — SMIC/Huawei DUV multi-patterning at 5nm ~20% yield; 1.6M die target 2026</li>
+  <li id="ref-32"><b>ITIF / SemiWiki</b> — "backfire" thesis; Huawei resurgence; SiCarrier building a "Chinese ASML"</li>
+  <li id="ref-33"><b>NVIDIA Q1 FY2027 results (newsroom, May 2026)</b> &mdash; record $81.6B revenue (+85% YoY), $75.2B data-center, 75% gross margin</li>
+  <li id="ref-34"><b>TSMC Q1 2026 Form 6-K (SEC) / earnings call</b> &mdash; $35.9B revenue, 66.2% gross / 58.1% operating / 50.5% net margin; $52&ndash;56B 2026 capex</li>
+  <li id="ref-35"><b>SK hynix 1Q26 results (PRNewswire/CNBC)</b> &mdash; 52.6T won (~$35.5B) revenue, 72% operating margin; ~57&ndash;61% HBM share</li>
+  <li id="ref-36"><b>AMD Q4 2025 / Q1 2026 Form 8-K (SEC)</b> &mdash; FY25 revenue $34.6B, ~52% non-GAAP gross margin; Data Center $5.4B Q4</li>
+  <li id="ref-37"><b>Epoch AI / Silicon Analysts</b> &mdash; NVIDIA B200 bill-of-materials: ~$6,400 to build, HBM $2,900 (45%), packaging $1,100; ~82% chip-level margin</li>
+  <li id="ref-38"><b>Yahoo Finance / Om Malik / Cornford&amp;Cross</b> &mdash; 2026 hyperscaler capex ~$700&ndash;725B (+69% YoY); MSFT/AMZN/GOOGL/META breakdown</li>
+  <li id="ref-39"><b>Bloomberg Intelligence / SK hynix outlook</b> &mdash; HBM market $4B (2023) &rarr; ~$55B (2026) &rarr; $130B (2030); semis ~$975B in 2026</li>
+  <li id="ref-40"><b>Cerebras S-1 / S-1-A (SEC, Apr&ndash;May 2026)</b> &mdash; $510M FY25 revenue (+76%), $24.6B backlog, 86% customer concentration, $363M one-time gain vs. $146M operating loss</li>
+  <li id="ref-41"><b>TechCrunch / Investing.com / MarketWise</b> &mdash; Cerebras IPO priced $185, opened $385 (+108%), ~$66B close; ~67&times; trailing sales</li>
+  <li id="ref-42"><b>Tech-Insider / TMB</b> &mdash; AI accelerator market ~$65B (2025) &rarr; $120B+ (2028); NVIDIA ~80% share; OpenAI $20B+ MRA, 750MW</li>
+  <li id="ref-43"><b>Sourceability / Avnet / Introl / CNBC (memory supercycle, 2026)</b> &mdash; HBM ~3&times; wafer capacity per bit vs DDR5; DRAM contract prices +~90% QoQ Q1 2026; HBM sold out through 2026; gaming-GPU output cut 30&ndash;40%; new fab supply not meaningful until 2027</li>
+</ol>
+    <p style="font-size:11.5px;color:var(--ink-3);margin-top:16px">Figures reflect public reporting as of mid-2026 and will move; specs and policy in this space change fast. Treat this as a snapshot and a starting point for discussion, not a final word. Where multiple outlets reported a figure, the most original/primary source is cited.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="disc">Built as an independent learning project to map a fast-moving field. Not investment advice. Corrections and counter-arguments welcome.</p>
+    <div>The Silicon Frontier · An interactive field guide · © 2026 Sashank</div>
+  </div>
+</footer>
+
+</div><!-- /content -->
+
+<script>
+(function(){
+  /* ---- diode demo ---- */
+  var diodeBtns=document.querySelectorAll('#diode-btns button');
+  var diodeSvg=document.getElementById('diode-svg');
+  var diodeStatus=document.getElementById('diode-status');
+  function drawDiode(bias){
+    var flowing = bias==='fwd';
+    var wire = flowing ? '#e8b04b' : '#3a4068';
+    // triangle + bar diode symbol, with battery polarity and current dots
+    var dots='';
+    if(flowing){
+      for(var i=0;i<6;i++){
+        var x=18+i*36;
+        dots+='<circle cx="'+x+'" cy="35" r="2.6" fill="#e8b04b"><animate attributeName="cx" from="'+x+'" to="'+(x+36)+'" dur="1s" repeatCount="indefinite"/></circle>';
+      }
+    }
+    diodeSvg.innerHTML=
+      '<line x1="6" y1="35" x2="95" y2="35" stroke="'+wire+'" stroke-width="2"/>'+
+      '<line x1="145" y1="35" x2="234" y2="35" stroke="'+wire+'" stroke-width="2"/>'+
+      // diode symbol (points right = allows flow rightward)
+      '<polygon points="100,20 100,50 128,35" fill="'+(flowing?'#e8b04b':'#3a4068')+'"/>'+
+      '<line x1="128" y1="18" x2="128" y2="52" stroke="'+(flowing?'#f4d08a':'#5a6189')+'" stroke-width="3"/>'+
+      dots+
+      '<text x="60" y="14" fill="#737ca6" font-size="9" font-family="monospace" text-anchor="middle">'+(flowing?'+ push':'− push')+'</text>'+
+      '<text x="180" y="14" fill="#737ca6" font-size="9" font-family="monospace" text-anchor="middle">'+(flowing?'− →':'+ ✕')+'</text>';
+    diodeStatus.innerHTML = flowing
+      ? '<span style="color:var(--gold)">● Current flows</span> — the valve is open'
+      : '<span style="color:var(--ink-3)">○ Current blocked</span> — the valve is shut';
+  }
+  diodeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      diodeBtns.forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      drawDiode(b.dataset.bias);
+    });
+  });
+  drawDiode('fwd');
+
+  /* ---- fab stepper ---- */
+  var steps=[
+    {n:'Step 1 of 6', t:'Grow a single crystal',
+     p:'It starts with sand, refined to ultra-pure silicon. In the <b>Czochralski process</b>, a seed crystal is dipped into molten silicon and slowly pulled upward while rotating, growing a single flawless cylinder — an <b>ingot</b> — up to 2 meters long.',
+     k:'The entire ingot is one continuous crystal lattice. Any disorder here becomes a defect later.',
+     svg:'<rect x="78" y="30" width="24" height="120" rx="6" fill="#e8b04b" opacity=".85"/><rect x="78" y="30" width="24" height="120" rx="6" stroke="#f4d08a" stroke-width="1"/><line x1="90" y1="18" x2="90" y2="30" stroke="#aab2d6" stroke-width="2"/><circle cx="90" cy="14" r="4" fill="#aab2d6"/>'},
+    {n:'Step 2 of 6', t:'Slice into wafers',
+     p:'The ingot is sliced — like a deli loaf — into thin discs called <b>wafers</b>, then polished mirror-flat by <b>Chemical Mechanical Planarization (CMP)</b>. Each wafer is the canvas that hundreds of chips will be printed onto at once.',
+     k:'Flatness is measured in atoms. A wafer that isn\'t perfectly level throws the light pattern out of focus.',
+     svg:'<ellipse cx="90" cy="92" rx="62" ry="16" fill="#b6822f"/><ellipse cx="90" cy="86" rx="62" ry="16" fill="#e8b04b"/><ellipse cx="90" cy="86" rx="62" ry="16" stroke="#f4d08a" stroke-width="1"/><line x1="120" y1="74" x2="135" y2="62" stroke="#b6822f" stroke-width="2"/>'},
+    {n:'Step 3 of 6', t:'Coat with photoresist',
+     p:'The wafer is spun and coated with a thin film of <b>photoresist</b> — a light-sensitive chemical. Wherever light later hits it, the resist changes: it either hardens or dissolves, depending on the type. This is what makes the silicon "printable."',
+     k:'Think of it as photographic film laid over the whole wafer, ready to capture a pattern.',
+     svg:'<ellipse cx="90" cy="100" rx="62" ry="15" fill="#b6822f"/><ellipse cx="90" cy="95" rx="62" ry="15" fill="#e8b04b"/><ellipse cx="90" cy="86" rx="62" ry="15" fill="#5fd3e0" opacity=".45"/><ellipse cx="90" cy="86" rx="62" ry="15" stroke="#5fd3e0" stroke-width="1"/>'},
+    {n:'Step 4 of 6', t:'Expose the pattern',
+     p:'This is <b>photolithography</b> — the heart of chipmaking. Light shines through a stencil-like <b>mask</b> carrying the circuit design, projecting (and shrinking) that pattern onto the resist. At the leading edge, that light is <b>EUV</b> (next section).',
+     k:'A finished chip layers this step 50–100 times — each layer a new pattern, precisely aligned to the last within nanometers.',
+     svg:'<line x1="60" y1="20" x2="60" y2="60" stroke="#5fd3e0" stroke-width="2"/><line x1="90" y1="20" x2="90" y2="60" stroke="#5fd3e0" stroke-width="2"/><line x1="120" y1="20" x2="120" y2="60" stroke="#5fd3e0" stroke-width="2"/><rect x="44" y="60" width="92" height="10" rx="2" fill="#1c2240" stroke="#9b8cff"/><ellipse cx="90" cy="120" rx="62" ry="15" fill="#e8b04b"/><rect x="60" y="108" width="8" height="12" fill="#9b8cff" opacity=".7"/><rect x="86" y="108" width="8" height="12" fill="#9b8cff" opacity=".7"/><rect x="112" y="108" width="8" height="12" fill="#9b8cff" opacity=".7"/>'},
+    {n:'Step 5 of 6', t:'Etch, dope, deposit — repeat',
+     p:'Now the pattern becomes physical. <b>Etching</b> chemically carves away exposed areas; <b>ion implantation</b> dopes precise regions n- or p-type; <b>deposition</b> (CVD/PVD) grows new thin layers of metal or insulator. Strip the resist and repeat — building the chip up in 3D, layer by layer.',
+     k:'The transistors and the copper "wiring" that connects them are all sculpted by cycling these steps dozens of times.',
+     svg:'<ellipse cx="90" cy="120" rx="62" ry="15" fill="#b6822f"/><ellipse cx="90" cy="114" rx="62" ry="15" fill="#e8b04b"/><g opacity=".9"><rect x="52" y="96" width="10" height="20" fill="#c9794e"/><rect x="72" y="90" width="10" height="26" fill="#c9794e"/><rect x="92" y="98" width="10" height="18" fill="#c9794e"/><rect x="112" y="92" width="10" height="24" fill="#c9794e"/></g><line x1="52" y1="96" x2="122" y2="96" stroke="#aab2d6" stroke-width="1" opacity=".5"/>'},
+    {n:'Step 6 of 6', t:'Test, dice &amp; package',
+     p:'Each wafer is tested, then <b>diced</b> into individual chips. Good ones are <b>packaged</b> — bonded, wired, and sealed into the black rectangles you recognize. For AI chips this back-end (CoWoS, HBM stacking) is now the hardest, most contested step of all.',
+     k:'Total journey: roughly 3 months and 1,000+ process steps from sand to a finished chip.',
+     svg:'<g><rect x="40" y="50" width="44" height="44" rx="3" fill="#161b33" stroke="var(--line)"/><rect x="48" y="58" width="28" height="28" rx="2" fill="#e8b04b" opacity=".8"/></g><g><rect x="96" y="50" width="44" height="44" rx="3" fill="#161b33" stroke="var(--line)"/><rect x="104" y="58" width="28" height="28" rx="2" fill="#e8b04b" opacity=".8"/></g><g><rect x="40" y="104" width="44" height="44" rx="3" fill="#161b33" stroke="var(--line)"/><rect x="48" y="112" width="28" height="28" rx="2" fill="#62c08a" opacity=".55"/></g><g><rect x="96" y="104" width="44" height="44" rx="3" fill="#161b33" stroke="var(--line)"/><rect x="104" y="112" width="28" height="28" rx="2" fill="#e8b04b" opacity=".8"/></g>'}
+  ];
+  var snav=document.querySelectorAll('#step-nav button');
+  var stext=document.getElementById('step-text');
+  var ssvg=document.getElementById('step-svg');
+  function renderStep(i){
+    var s=steps[i];
+    stext.innerHTML='<div class="num">'+s.n+'</div><h3>'+s.t+'</h3><p>'+s.p+'</p><div class="keynote">'+s.k+'</div>';
+    ssvg.innerHTML=s.svg;
+    snav.forEach(function(b,j){b.classList.toggle('on',j===i)});
+  }
+  snav.forEach(function(b){b.addEventListener('click',function(){renderStep(+b.dataset.step)})});
+  renderStep(0);
+
+  /* ---- tabs ---- */
+  var tabs=document.querySelectorAll('#tabs .tab');
+  var panels=document.querySelectorAll('.panel-card');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      var key=t.dataset.t;
+      panels.forEach(function(p){p.classList.toggle('hidden',p.dataset.p!==key)});
+    });
+  });
+
+  /* ---- scale toggle ---- */
+  var data={
+    area:{a:'46,225 mm²',b:'814 mm²',r:'~57× larger',title:'Silicon area'},
+    trans:{a:'4 trillion',b:'80 billion',r:'~50× more',title:'Transistor count'},
+    cores:{a:'900,000 cores',b:'~16,896 CUDA / 132 SM',title:'Compute cores',r:'~53× more cores'},
+    mem:{a:'44 GB SRAM (on-chip)',b:'~50 MB SRAM on-die',title:'On-chip memory',r:'~900× more on-chip'}
+  };
+  var mt=document.querySelectorAll('#metric-toggle button');
+  mt.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      mt.forEach(function(x){x.classList.remove('on')});
+      btn.classList.add('on');
+      var d=data[btn.dataset.m];
+      document.getElementById('cmp-title').textContent=d.title;
+      document.getElementById('cmp-a').textContent=d.a;
+      document.getElementById('cmp-b').textContent=d.b;
+      document.getElementById('cmp-r').textContent=d.r;
+    });
+  });
+
+  /* ---- flow stages ---- */
+  var flowText={
+    design:'<b>Designing the chip — hugely valuable, but not the choke point.</b> Companies like Nvidia, AMD and Cerebras invent the chip\'s blueprint. That is where much of the profit sits — but a brilliant design still waits in line behind everyone downstream. A design you cannot assemble or feed ships slowly.',
+    fab:'<b>Making the chip — concentrated, but not the scarce step.</b> TSMC\'s factories that actually print the processors are the crown jewels of the industry. But capacity to print the raw processor is generally available. The traffic jam is one step later, in assembly.',
+    pkg:'<b>This is where everything backs up.</b> "Packaging" means bolting the processor to its memory in one tightly-integrated unit (the method is called <b>CoWoS</b>), plus the stacked <b>memory</b> itself (called <b>HBM</b>). Both have been <span class="hl">sold out into 2026</span>. Demand for the packaging is set to roughly triple in two years<a class="cite" href="#ref-19">[19]</a>, and just three companies make nearly all the memory. This — not printing the chip — sets how fast AI systems can ship.',
+    deploy:'<b>Demand is effectively bottomless right now.</b> The giant cloud companies pre-buy years of capacity in advance, which is exactly what drags the shortage back upstream into packaging and memory. The data centers are endlessly hungry; the assembly step decides how fast they can actually be fed.'
+  };
+  var stages=document.querySelectorAll('#flow .stage');
+  var fd=document.getElementById('flow-detail');
+  stages.forEach(function(s){
+    s.addEventListener('click',function(){
+      fd.innerHTML=flowText[s.dataset.s];
+    });
+  });
+
+  /* ---- timeline filter ---- */
+  var fbtns=document.querySelectorAll('#tl-filter button');
+  var items=document.querySelectorAll('#timeline .tl-item');
+  var eras=document.querySelectorAll('#timeline .tl-era');
+  fbtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      fbtns.forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var f=b.dataset.f;
+      items.forEach(function(it){
+        var show = f==='all' || it.classList.contains(f);
+        it.style.display=show?'block':'none';
+      });
+      // era markers describe both threads — only show when viewing all
+      eras.forEach(function(e){ e.style.display = (f==='all')?'block':'none'; });
+    });
+  });
+
+  /* ---- sticky nav: scroll-spy active highlighting ---- */
+  (function(){
+    var nav=document.getElementById('topnav');
+    if(!nav) return;
+    var links=Array.prototype.slice.call(nav.querySelectorAll('a'));
+    var map={};
+    links.forEach(function(a){
+      var id=a.getAttribute('href').slice(1);
+      var sec=document.getElementById(id);
+      if(sec) map[id]={a:a,sec:sec};
+      // keep the clicked tab visible within the scrolling nav bar
+      a.addEventListener('click',function(){
+        setTimeout(function(){ a.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'}); },10);
+      });
+    });
+    var ids=Object.keys(map);
+    function setActive(id){
+      links.forEach(function(a){ a.classList.remove('active'); });
+      if(map[id]) map[id].a.classList.add('active');
+    }
+    if('IntersectionObserver' in window){
+      var visible={};
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          visible[en.target.id]=en.isIntersecting?en.intersectionRatio:0;
+        });
+        // pick the section nearest the top that's on screen
+        var best=null,bestTop=Infinity;
+        ids.forEach(function(id){
+          var r=map[id].sec.getBoundingClientRect();
+          if(r.bottom>70 && r.top<window.innerHeight*0.5){
+            if(r.top<bestTop){bestTop=r.top;best=id;}
+          }
+        });
+        if(best) setActive(best);
+      },{rootMargin:'-60px 0px -55% 0px',threshold:[0,0.01,0.25,0.5]});
+      ids.forEach(function(id){ obs.observe(map[id].sec); });
+    } else {
+      // fallback: scroll listener
+      window.addEventListener('scroll',function(){
+        var best=null,bestTop=Infinity;
+        ids.forEach(function(id){
+          var r=map[id].sec.getBoundingClientRect();
+          if(r.top<window.innerHeight*0.4 && r.bottom>70 && r.top<bestTop){bestTop=r.top;best=id;}
+        });
+        if(best) setActive(best);
+      },{passive:true});
+    }
+  })();
+})();
+</script>
+</body>
+</html>
